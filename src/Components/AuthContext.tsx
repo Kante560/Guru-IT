@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   useContext,
   useState,
@@ -9,12 +9,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Interfaces
 interface User {
   name: string;
   reg_no: string;
   track: string;
-  // add other user fields as needed
+  role: string;
 }
 
 interface RegisterData {
@@ -37,25 +36,22 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<void>;
 }
 
-// Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Provider
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
+  // On mount, load stored auth state
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
-
     if (storedToken) {
       setToken(storedToken);
       setIsAuthenticated(true);
     }
-
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
@@ -67,84 +63,92 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch("https://guru-it.vercel.app/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) throw new Error("Login failed");
-
-      const result = await response.json();
-
-      if (result.token) {
-        localStorage.setItem("token", result.token);
-        setToken(result.token);
-        setIsAuthenticated(true);
-
-        // Save user details
-        const userData: User = {
-          name: result.user.name,
-          reg_no: result.user.reg_no,
-          track: result.user.track,
-        };
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-
-        toast.success("Login successful!");
-        navigate("/admindashboard");
-      } else {
-        throw new Error("Token not found in response");
+      const res = await fetch(
+        "https://guru-it.vercel.app/auth/login", // ensure this matches Swagger
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Login failed");
       }
-    } catch (error) {
-      toast.error("Login failed");
-      throw error;
+      const result = await res.json();
+      if (!result.token) throw new Error("No token in response");
+
+      // persist auth
+      localStorage.setItem("token", result.token);
+      setToken(result.token);
+      setIsAuthenticated(true);
+
+      // store user
+      const u: User = {
+        name: result.user.name,
+        reg_no: result.user.reg_no,
+        track: result.user.track,
+        role: result.user.role,
+      };
+      setUser(u);
+      localStorage.setItem("user", JSON.stringify(u));
+
+      toast.success("Login successful!");
+      // redirect immediately
+      navigate(u.role === "admin" ? "/admindashboard" : "/");
+    } catch (e: any) {
+      toast.error(e.message);
+      throw e;
     }
   };
 
   const register = async (data: RegisterData) => {
     try {
-      const response = await fetch("https://guru-it.vercel.app/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) throw new Error("Registration failed");
-
-      const result = await response.json();
-
-      if (result.token) {
-        localStorage.setItem("token", result.token);
-        setToken(result.token);
-        setIsAuthenticated(true);
-
-        // Store user data if returned (optional)
-        if (result.user) {
-          const userData: User = {
-            name: result.user.name,
-            reg_no: result.user.reg_no,
-            track: result.user.track,
-          };
-          setUser(userData);
-          localStorage.setItem("user", JSON.stringify(userData));
+      const res = await fetch(
+        "https://guru-it.vercel.app/register", // likely correct path
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
         }
-
-        toast.success("Registration successful!");
+      );
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Registration failed");
       }
-    } catch (error) {
-      toast.error("Registration failed");
-      throw error;
+      const result = await res.json();
+      if (!result.token) throw new Error("No token in response");
+
+      localStorage.setItem("token", result.token);
+      setToken(result.token);
+      setIsAuthenticated(true);
+
+      if (result.user) {
+        const u: User = {
+          name: result.user.name,
+          reg_no: result.user.reg_no,
+          track: result.user.track,
+          role: result.user.role,
+        };
+        setUser(u);
+        localStorage.setItem("user", JSON.stringify(u));
+      }
+
+      toast.success("Registration successful!");
+      navigate("/"); // or wherever new users go
+    } catch (e: any) {
+      toast.error(e.message);
+      throw e;
     }
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
-    setToken(null);
-    setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    toast.success("Logged out successfully");
+    setToken(null);
+    setUser(null);
+    setIsAuthenticated(false);
+    toast.success("Logged out");
     navigate("/login");
   };
 
@@ -157,20 +161,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Hook to access auth context
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be inside AuthProvider");
+  return ctx;
 };
 
-// Optional hook to redirect if authenticated
 export const useAuthRedirect = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/admincheckin");
+      user?.role === "admin" ? navigate("/admindashboard") : navigate("/");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 };

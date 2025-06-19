@@ -15,7 +15,7 @@ export const Login = () => {
     e.preventDefault();
     try {
       await login(email, password);
-      toast.success("Login successful! Welcome back.");
+  
     } catch (error) {
       toast.error("Login failed. Please check your credentials.");
     }

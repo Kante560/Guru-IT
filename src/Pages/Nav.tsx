@@ -9,25 +9,19 @@ import "react-toastify/dist/ReactToastify.css";
 export const Nav = () => {
   const { isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
-
-const handleLogout = (e: React.FormEvent) => {
+  const handleLogout = (e: React.FormEvent) => {
     e.preventDefault();
     logout();
-      toast.success("Logged out successfully!")
- 
- }
+    // toast.success("Logged out successfully!");
+  };
   return (
     <div className="bg-white border-b-gray-200 font-inter border-b-[2px] w-full z-2 fixed top-0 left-0">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img
-            src={gurudevs}
-            alt="Guru logo"
-          
-          />
+          <img src={gurudevs} alt="Guru logo" />
         </Link>
 
         {/* Desktop Nav */}
@@ -42,12 +36,14 @@ const handleLogout = (e: React.FormEvent) => {
                 to="/checkinout"
               >
                 Check-In
-              </Link>              <Link
+              </Link>
+              <Link
                 className="hover:text-black hover:underline"
                 onClick={handleLogout}
-                to="/">
-                  Logout
-                </Link>
+                to="/"
+              >
+                Logout
+              </Link>
             </>
           ) : (
             <>
@@ -110,5 +106,4 @@ const handleLogout = (e: React.FormEvent) => {
       )}
     </div>
   );
-
 };
