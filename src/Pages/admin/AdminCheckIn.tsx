@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AdminNav } from "./AdminNav";
 import { useAuth } from "../../Components/AuthContext";
 import { toast } from "react-toastify";
@@ -18,50 +18,57 @@ const AdminCheckIn = () => {
   const { token } = useAuth();
 
   useEffect(() => {
+    const fetchCheckins = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("https://guru-it.vercel.app/admin/checkins?status=pending", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+
+        const data = await response.json();
+
+        let checkinsArr = [];
+        if (Array.isArray(data)) {
+          checkinsArr = data;
+        } else if (data && Array.isArray(data.checkins)) {
+          checkinsArr = data.checkins;
+        }
+
+        const formattedCheckins = checkinsArr.map((checkin: any) => ({
+          id: checkin.id,
+          name: checkin.name,
+          reg_no: checkin.reg_no,
+          track: checkin.track,
+          checkInTime: new Date(checkin.created_at).toLocaleString(),
+          status: checkin.status || "Pending",
+        }));
+
+        setPendingCheckins(formattedCheckins);
+      } catch (error) {
+        toast.error("Failed to fetch check-ins");
+        setPendingCheckins([]);
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchCheckins();
   }, [token]);
 
-  const fetchCheckins = async () => {
-    try {
-      const response = await fetch('https://guru-it.vercel.app/admin/users', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch users');
-      }
-
-      const data = await response.json();
-      const formattedCheckins = data.map((user: any) => ({
-        id: user.id,
-        name: user.name,
-        reg_no: user.reg_no,
-        track: user.track,
-        checkInTime: new Date(user.created_at).toLocaleString(),
-        status: 'Pending'
-      }));
-
-      setPendingCheckins(formattedCheckins);
-    } catch (error) {
-      toast.error('Failed to fetch check-ins');
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleApprove = async (id: number) => {
     try {
-      const response = await fetch(`https://guru-it.vercel.app/admin/approve-checkin/${id}`, {
-        method: 'POST',
+      const response = await fetch(`https://guru-it.vercel.app/admin/checkin/${id}/status`, {
+        method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ status: "checked-in" })
       });
 
       if (!response.ok) {
@@ -70,7 +77,31 @@ const AdminCheckIn = () => {
 
       toast.success('Check-in approved successfully');
       // Refresh the list after approval
-      fetchCheckins();
+      setLoading(true);
+      const res = await fetch("https://guru-it.vercel.app/admin/checkins?status=pending", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      const data = await res.json();
+      let checkinsArr = [];
+      if (Array.isArray(data)) {
+        checkinsArr = data;
+      } else if (data && Array.isArray(data.checkins)) {
+        checkinsArr = data.checkins;
+      }
+      const formattedCheckins = checkinsArr.map((checkin: any) => ({
+        id: checkin.id,
+        name: checkin.name,
+        reg_no: checkin.reg_no,
+        track: checkin.track,
+        checkInTime: new Date(checkin.created_at).toLocaleString(),
+        status: checkin.status || "Pending",
+      }));
+      setPendingCheckins(formattedCheckins);
+      setLoading(false);
     } catch (error) {
       toast.error('Failed to approve check-in');
       console.error('Error:', error);

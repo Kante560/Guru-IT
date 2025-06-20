@@ -17,7 +17,8 @@ export const Nav = () => {
     // toast.success("Logged out successfully!");
   };
   return (
-    <div className="bg-white border-b-gray-200 font-inter border-b-[2px] w-full z-2 fixed top-0 left-0">
+   <div className="backdrop-blur-md bg-white/20 border-b border-white/30 shadow-md font-inter w-full fixed top-0 left-0 z-50">
+
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center">

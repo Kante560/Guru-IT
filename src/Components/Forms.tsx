@@ -2,12 +2,17 @@ import React, { useState, useEffect } from "react";
 import { AssignmentModal } from "./AssignmentModal";
 import { useAuth } from "./AuthContext";
 
-// Define the type for a single assignment
+// Match the payload from AssignmentModalform
 interface Assignment {
-  topic?: string;
-  track?: string;
-  deadline?: string;
-  description?: string;
+  track: string;
+  topic: string;
+  date: string;
+  time: string;
+  is_group: boolean;
+  group_members: string[];
+  question_text: string;
+  question_link: string;
+  // question_file is not needed for display, but you can add if you want
 }
 
 export const Forms: React.FC = () => {
@@ -17,36 +22,30 @@ export const Forms: React.FC = () => {
   const { token } = useAuth();
 
   useEffect(() => {
-    const fetchAssignments = async () => {
+    const fetchAssignment = async () => {
       setLoading(true);
       try {
-        const response = await fetch("https://guru-it.vercel.app/admin/assignments", {
+        const response = await fetch("https://guru-it.vercel.app/current-assignment", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
           },
         });
-
         const data = await response.json();
-
-        // If the API returns an array, use the first assignment as the current one
-        if (Array.isArray(data) && data.length > 0) {
-          setCurrentAssignment(data[0]);
-        } else if (data && Array.isArray(data.assignments) && data.assignments.length > 0) {
-          setCurrentAssignment(data.assignments[0]);
+        if (data && data.topic) {
+          setCurrentAssignment(data);
         } else {
           setCurrentAssignment(null);
         }
       } catch (error) {
-        console.error("Error fetching assignments:", error);
+        console.error("Error fetching assignment:", error);
         setCurrentAssignment(null);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchAssignments();
+    fetchAssignment();
   }, [token]);
 
   return (
@@ -59,6 +58,14 @@ export const Forms: React.FC = () => {
           <>
             <p className="text-gray-800 px-auto"><strong>Topic:</strong> {currentAssignment.topic}</p>
             <p className="text-gray-800 px-auto"><strong>Track:</strong> {currentAssignment.track}</p>
+            <p className="text-gray-800 px-auto"><strong>Date:</strong> {currentAssignment.date}</p>
+            <p className="text-gray-800 px-auto"><strong>Time:</strong> {currentAssignment.time}</p>
+            <p className="text-gray-800 px-auto"><strong>Question:</strong> {currentAssignment.question_text}</p>
+            {currentAssignment.question_link && (
+              <p className="text-gray-800 px-auto">
+                <strong>Link:</strong> <a href={currentAssignment.question_link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">View</a>
+              </p>
+            )}
             {/* Add more fields as needed */}
           </>
         ) : (

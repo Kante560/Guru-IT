@@ -89,13 +89,9 @@ export const CheckInOut = () => {
       const response = await fetch('https://guru-it.vercel.app/checkout', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          checkOutTime: new Date().toISOString(),
-          totalTime: checkInState.elapsedTime
-        })
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
       });
 
       if (!response.ok) throw new Error('Check-out failed');
@@ -108,6 +104,7 @@ export const CheckInOut = () => {
       });
       toast.success('Checked out successfully!');
     } catch (error) {
+      toast.error('Failed to check out');
       console.error('Failed to check out');
     }
   };
@@ -151,6 +148,12 @@ export const CheckInOut = () => {
                 >
                   Submit Check-Out
                 </button>
+                {!checkInState.isCheckedIn && (
+                  <p className="text-yellow-600 mt-2 text-sm">
+                    You must check in and wait for admin approval before you can check out.<br />
+                    <span className="font-semibold">If you have checked in and admin has approved, please refresh this page to enable check out.</span>
+                  </p>
+                )}
               </div>
             </div>
           </div>

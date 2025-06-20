@@ -133,8 +133,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(u);
         localStorage.setItem("user", JSON.stringify(u));
       }
-
-      toast.success("Registration successful!");
       navigate("/"); // or wherever new users go
     } catch (e: any) {
       toast.error(e.message);
