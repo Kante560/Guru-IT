@@ -1,36 +1,87 @@
 import { Routes, Route } from "react-router-dom";
-import { Home } from "./Pages/Home";
-import { CalendarPage } from "./Pages/Calender";
+import { Home } from "./Pages/UserDashboard";
+import { CalendarPage } from "./Components/Calender";
 import { Signup } from "./Pages/auth/Signup";
 import { Login } from "./Pages/auth/Login";
 import { CheckInOut } from "./Pages/CheckInOut";
-import { AuthProvider } from "./Components/AuthContext.tsx";
-import AdminDashboard from "./Pages/admin/AdminDashboard.tsx";
-import AdminCheckIn from "./Pages/admin/AdminCheckIn.tsx";
-import  UsersPage from "./Pages/admin/UsersPage.tsx";
-import { ToastContainer  } from "react-toastify";
+import { AuthProvider } from "./Components/AuthContext";
+import ProtectedRoute from "./Routes/ProtectedRoute";
+import AdminDashboard from "./Pages/admin/AdminDashboard";
+import AdminCheckIn from "./Pages/admin/AdminCheckIn";
+import UsersPage from "./Pages/admin/UsersPage";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AssignmentUpload } from "./Pages/admin/AssignmentModalform.tsx";
-import { Forms } from "./Components/Forms.tsx"
-
+import { AssignmentUpload } from "./Pages/admin/AdminAssignmentForm";
+import { Forms } from "./Components/Forms";
 
 export const App = () => {
   return (
     <AuthProvider>
       <ToastContainer />
       <Routes>
+        {/* ---------- Public Routes ---------- */}
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/home" element={<Home />} />
-                <Route path="/assignment" element={<Forms />} />
 
-        <Route path="/admindashboard" element={<AdminDashboard />} />
-          <Route path="/admincheckin" element={<AdminCheckIn />} />
-          <Route path="/users" element={<UsersPage/>} />
-          <Route path="/adminupload" element={<AssignmentUpload />} /> 
-        <Route path="/calendarpage" element={<CalendarPage />} />
-        <Route path="/checkinout" element={<CheckInOut />} />
+        {/* ---------- Intern-only Routes ---------- */}
+        <Route
+          path="/checkinout"
+          element={
+          <ProtectedRoute role="">
+          <CheckInOut/>
+          </ProtectedRoute> }       
+        />
+        <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute role="">
+              <CalendarPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/forms"
+          element={
+            <ProtectedRoute role="">
+              <Forms />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ---------- Admin-only Routes ---------- */}
+        <Route
+          path="/admindashboard"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admincheckin"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminCheckIn />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute role="admin">
+              <UsersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/adminupload"
+          element={
+            <ProtectedRoute role="admin">
+              <AssignmentUpload />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </AuthProvider>
   );

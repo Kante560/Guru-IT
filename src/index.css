@@ -1,7 +1,64 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
+
+.bg-custom-blue-10 {
+  background-color: rgba(0, 60, 225, 0.912);
+}
+
+@layer utilities {
+  @keyframes shooting {
+    0% {
+      transform: translateY(-150px) rotate(180deg); /* Start above and point down */
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(500px) rotate(180deg); /* Move straight down */
+      opacity: 0;
+    }
+  }
+
+  .animate-shooting {
+    animation: shooting 2s ease-in-out infinite;
+  }
+
+  @keyframes slide-down-admin {
+    0% {
+      opacity: 0;
+      transform: translateY(-32px) scaleY(0.96);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+  }
+  @keyframes slide-up-admin {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-32px) scaleY(0.96);
+    }
+  }
+
+  .bg-admin-dashboard {
+    background-color: #f3f4f6; /* Tailwind's gray-100 */
+  }
+  .bg-user-dashboard {
+    background-image: linear-gradient(to right, #dbeafe, #fff, #fecaca); /* blue-100, white, red-100 */
+  }
+  .bg-unauth-home {
+    background-color: #131A29;
+  }
+}
+
+

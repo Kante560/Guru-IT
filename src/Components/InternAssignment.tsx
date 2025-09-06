@@ -6,8 +6,8 @@ export const AssignmentModal: React.FC<{
   onClose: () => void;
 }> = ({ open, onClose }) => {
   if (!open) return null;
-  const [isGroup, setIsGroup] = useState(false);
-  
+  const [isGroup, setIsGroup] = useState<boolean | undefined>(undefined);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-[#00000060] bg-opacity-40">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full space-y-4 relative">

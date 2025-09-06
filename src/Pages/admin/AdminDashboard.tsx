@@ -23,30 +23,33 @@ const AdminDashboard = () => {
       </div>
     );
   }
-
   return (
     <>
-    <div className=" bg-gray-100 min-h-[100vh]  justify-center items-center font-inter">
-      <AdminNav />
-      <div className="max-w-7xl  mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold mb-4 text-blue-900">Welcome, Admin 👋</h2>
-          <p className="text-gray-700 mb-4">
-            Use the navigation above to:
-          </p>
-          <ul className="list-disc list-inside space-y-2 text-gray-600 ml-4">
-            <li>Monitor intern check-ins and attendance</li>
-            <li>Manage and create assignments</li>
-            <li>View and manage registered users</li>
-            <li>Track intern progress and submissions</li>
-          </ul>
+      <div className="bg-admin-dashboard min-h-[150vh] flex flex-col">
+        <div className="flex-1 flex flex-col justify-center items-center font-inter">
+          <AdminNav />
+            <div className="w-full max-w-7xl mx-auto pt-8 sm:pt-16 px-2 sm:px-6 flex-1 flex flex-col mt-8">
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <h2 className="text-lg sm:text-2xl font-semibold mb-2 sm:mb-4 text-blue-900">
+              Welcome, Admin 👋
+              </h2>
+              <p className="text-gray-700 mb-2 sm:mb-4">
+              Use the navigation above to:
+              </p>
+              <ul className="list-disc list-inside space-y-1 sm:space-y-2 text-gray-600 ml-2 sm:ml-4">
+              <li>Monitor intern check-ins and attendance</li>
+              <li>Manage and create assignments</li>
+              <li>View and manage registered users</li>
+              <li>Track intern progress and submissions</li>
+              </ul>
+            </div>
+            </div>
         </div>
+        <Footer />
       </div>
-    </div>
-
-    <Footer/>
     </>
   );
+  
 };
 
 export default AdminDashboard;
