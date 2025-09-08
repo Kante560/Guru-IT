@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import gurudevs from "../assets/gurudevs.png";
 import { useAuth } from "./AuthContext.tsx";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
@@ -15,23 +14,24 @@ export const Nav = () => {
   };
 
   return (
-    <div className="w-full fixed top-0 left-0 z-50 mt-3">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4">
-        <div className="bg-white/20 border-b border-white/30 backdrop-blur-md w-full shadow-md font-inter rounded-[35px] px-2 sm:px-5">
-          <div className="max-w-7xl mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
+    <>
+      <div className="w-full fixed top-0 left-0 right-0 z-50 mt-6 md:mt-8 ">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6">
+          <div className="bg-white/10 backdrop-blur-md ring-1 ring-white/20 w-full shadow-lg font-inter rounded-[28px] sm:rounded-[35px] md:rounded-[40px] px-3 sm:px-5 md:px-6">
+            <div className="max-w-7xl mx-auto px-1 sm:px-4 md:px-6 py-2.5 sm:py-4 md:py-5 flex items-center justify-between">
             {/* Logo (Left) */}
             <div className="flex-shrink-0 min-w-[40px]">
               <Link to="/" className="flex items-center">
                 <img
-                  src={gurudevs}
+                  src="/gurudevs.png"
                   alt="Guru logo"
-                  className="h-8 w-auto sm:h-10"
+                  className="h-8 w-auto sm:h-10 md:h-11"
                 />
               </Link>
             </div>
 
             {/* Center Links */}
-            <div className="hidden md:flex flex-1 justify-center space-x-4 sm:space-x-6 text-gray-600 font-medium">
+            <div className="hidden md:flex flex-1 justify-center space-x-6 md:space-x-8 text-gray-600 font-medium">
               {isAuthenticated && (
                 <>
                   <Link className="hover:text-black hover:underline" to="/">
@@ -48,7 +48,7 @@ export const Nav = () => {
             </div>
 
             {/* Right (Logout or Auth Buttons) */}
-            <div className="hidden md:flex items-center space-x-2 sm:space-x-4">
+            <div className="hidden md:flex items-center space-x-3 md:space-x-5">
               {isAuthenticated ? (
                 <Link
                   className=" hover:underline text-red-600"
@@ -77,57 +77,65 @@ export const Nav = () => {
 
             {/* Mobile Toggle Button */}
             <button
-              className="md:hidden text-gray-700 focus:outline-none"
+              className="md:hidden text-gray-700 focus:outline-none p-2.5 rounded-lg focus-visible:ring-2 focus-visible:ring-blue-500 active:scale-95 transition"
               onClick={toggleMenu}
+              aria-label="Toggle menu"
+              aria-controls="mobile-menu"
+              aria-expanded={menuOpen}
             >
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+              {menuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
 
-          {/* Mobile Menu */}
-          {menuOpen && (
-            <div className="md:hidden bg-white px-2 sm:px-4 pb-4 space-y-3 text-gray-600 font-medium text-center rounded-b-[35px]">
-              {isAuthenticated ? (
-                <>
-                  <Link to="/" onClick={toggleMenu} className="block">
-                    Home
-                  </Link>
-                  <Link to="/checkinout" onClick={toggleMenu} className="block">
-                    Check-In
-                  </Link>
-                  <Link
-                    to="/"
-                    onClick={(e) => {
-                      handleLogout(e);
-                      toggleMenu();
-                    }}
-                    className="block"
-                  >
-                    Logout
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/signup"
-                    onClick={toggleMenu}
-                    className="block py-2 px-4 bg-red-600 text-white rounded-lg"
-                  >
-                    Sign-up
-                  </Link>
-                  <Link
-                    to="/login"
-                    onClick={toggleMenu}
-                    className="block py-2 px-4 bg-[#131A29] text-white rounded-lg"
-                  >
-                    Sign-in
-                  </Link>
-                </>
-              )}
-            </div>
-          )}
+            {/* Mobile Menu */}
+            {menuOpen && (
+              <div
+                id="mobile-menu"
+                className="md:hidden bg-white/95 backdrop-blur px-3 sm:px-4 pb-4 pt-2 space-y-2 text-gray-700 font-medium text-center rounded-b-[28px] sm:rounded-b-[35px] shadow-lg border-t border-gray-100"
+              >
+                {isAuthenticated ? (
+                  <>
+                    <Link to="/" onClick={toggleMenu} className="block py-3 rounded-lg hover:bg-gray-50">
+                      Home
+                    </Link>
+                    <Link to="/checkinout" onClick={toggleMenu} className="block py-3 rounded-lg hover:bg-gray-50">
+                      Check-In
+                    </Link>
+                    <Link
+                      to="/"
+                      onClick={(e) => {
+                        handleLogout(e);
+                        toggleMenu();
+                      }}
+                      className="block py-3 rounded-lg text-red-600 hover:bg-red-50"
+                    >
+                      Logout
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/signup"
+                      onClick={toggleMenu}
+                      className="block py-3 px-4 bg-red-600 text-white rounded-lg active:scale-[.99]"
+                    >
+                      Sign-up
+                    </Link>
+                    <Link
+                      to="/login"
+                      onClick={toggleMenu}
+                      className="block py-3 px-4 bg-[#131A29] text-white rounded-lg active:scale-[.99]"
+                    >
+                      Sign-in
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+      {/* No spacer: allow background to flow behind navbar for a floating effect */}
+    </>
   );
 };

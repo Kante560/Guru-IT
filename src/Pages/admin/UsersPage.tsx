@@ -30,12 +30,7 @@ const UsersPage = () => {
           },
         });
 
-        // if (!response.ok) {
-        //   const errorText = await response.text();
-        //   toast.error(`Failed to fetch users: ${errorText}`);
-        //   setUsers([]);
-        //   return;
-        // }
+       
         const data = await response.json();
 
         if (Array.isArray(data)) {
