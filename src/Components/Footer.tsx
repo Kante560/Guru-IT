@@ -1,6 +1,4 @@
 // src/components/Footer.tsx
-
-import React from "react";
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import { Link } from "react-router-dom";
 
