@@ -1,4 +1,4 @@
-import { useAuth } from "../Components/AuthContext.tsx";
+import { useAuth } from "../_context/AuthContext.tsx";
 import { Footer } from "../Components/Footer.tsx";
 import { Forms } from "../Components/Forms.tsx";
 import { CalendarPage } from "../Components/Calender.tsx";
@@ -53,20 +53,20 @@ export const Home = () => {
               {/* ✅ Replaced h1 with SplitText */}
               <div className="mb-4 sm:mb-6 md:mb-8">
                <SplitText
-  className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-white leading-tight drop-shadow text-center"
-  delay={80}
-  duration={0.6}
-  ease="power3.out"
-  splitType="chars"
-  from={{ opacity: 0, y: 40 }}
-  to={{ opacity: 1, y: 0 }}
-  onLetterAnimationComplete={handleAnimationComplete}
->
-  Launch Your <span className="text-blue-900 ml-2">Tech</span>{" "}
-  <span className="block text-red-600 mt-2">
-    Career with Ease 🚀
-  </span>
-</SplitText>
+                  className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-white leading-tight drop-shadow text-center"
+                  delay={80}
+                  duration={0.6}
+                  ease="power3.out"
+                  splitType="chars"
+                  from={{ opacity: 0, y: 40 }}
+                  to={{ opacity: 1, y: 0 }}
+                  onLetterAnimationComplete={handleAnimationComplete}
+                >
+                Launch Your <span className="text-blue-900 ml-2">Tech</span>{" "}
+                <span className="block text-red-600 mt-2">
+                  Career with Ease 🚀
+                </span>
+               </SplitText>
               </div>
 
               <div className="text-center w-full flex items-center justify-center rounded-lg p-2 sm:p-4 md:p-5">

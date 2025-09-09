@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "./AuthContext.tsx";
+import { useAuth } from "../_context/AuthContext.tsx";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -53,7 +53,7 @@ export const Nav = () => {
                 <Link
                   className=" hover:underline text-red-600"
                   onClick={handleLogout}
-                  to="/"
+                  to="/" 
                 >
                   Logout
                 </Link>
@@ -90,15 +90,18 @@ export const Nav = () => {
             {/* Mobile Menu */}
             {menuOpen && (
               <div
-                id="mobile-menu"
-                className="md:hidden bg-white/95 backdrop-blur px-3 sm:px-4 pb-4 pt-2 space-y-2 text-gray-700 font-medium text-center rounded-b-[28px] sm:rounded-b-[35px] shadow-lg border-t border-gray-100"
+                id="user-mobile-menu"
+                className="md:hidden bg-white/10 backdrop-blur-md ring-1 ring-white/20 px-3 sm:px-4 pb-4 pt-2 space-y-2 text-gray-700 font-medium text-center rounded-b-[28px] transition-all duration-500 origin-top animate-none"
+                style={{
+                  animation: "slide-down-admin 0.45s cubic-bezier(0.4,0,0.2,1)",
+                }}
               >
                 {isAuthenticated ? (
                   <>
-                    <Link to="/" onClick={toggleMenu} className="block py-3 rounded-lg hover:bg-gray-50">
+                    <Link to="/" onClick={toggleMenu} className="block py-3 rounded-lg hover:bg-white/10">
                       Home
                     </Link>
-                    <Link to="/checkinout" onClick={toggleMenu} className="block py-3 rounded-lg hover:bg-gray-50">
+                    <Link to="/checkinout" onClick={toggleMenu} className="block py-3 rounded-lg hover:bg-white/10">
                       Check-In
                     </Link>
                     <Link
@@ -107,7 +110,7 @@ export const Nav = () => {
                         handleLogout(e);
                         toggleMenu();
                       }}
-                      className="block py-3 rounded-lg text-red-600 hover:bg-red-50"
+                      className="block py-3 rounded-lg text-red-600 hover:bg-white/10"
                     >
                       Logout
                     </Link>
@@ -117,14 +120,14 @@ export const Nav = () => {
                     <Link
                       to="/signup"
                       onClick={toggleMenu}
-                      className="block py-3 px-4 bg-red-600 text-white rounded-lg active:scale-[.99]"
+                      className="block py-3 px-4 bg-[#131A29] text-white rounded-lg ring-1 ring-white/20 hover:bg-white/10 active:scale-[.99]"
                     >
                       Sign-up
                     </Link>
                     <Link
                       to="/login"
                       onClick={toggleMenu}
-                      className="block py-3 px-4 bg-[#131A29] text-white rounded-lg active:scale-[.99]"
+                      className="block py-3 px-4 bg-[#131A29] text-white rounded-lg ring-1 ring-white/20 hover:bg-white/10 active:scale-[.99]"
                     >
                       Sign-in
                     </Link>

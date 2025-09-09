@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../../Components/AuthContext";
+import { useAuth } from "../../_context/AuthContext";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 

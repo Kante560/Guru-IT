@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../Components/AuthContext";
+import { useAuth } from "../../_context/AuthContext";
 import { Footer } from "../../Components/Footer";
 import { AdminNav } from "./AdminNav";
 

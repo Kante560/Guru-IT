@@ -1,5 +1,5 @@
 import { AdminNav } from "./AdminNav";
-import { useAuth } from "../../Components/AuthContext";
+import { useAuth } from "../../_context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Footer } from "../../Components/Footer";
@@ -32,7 +32,7 @@ const AdminDashboard = () => {
         <div className="flex-1 flex flex-col font-inter">
           <AdminNav />
           <div className="flex-1 flex flex-col justify-center items-center" style={{ minHeight: "50vh" }}>
-            <div className="w-full max-w-7xl mx-auto pt-8 sm:pt-18 px-2 sm:px-6 flex-1 flex flex-col mt-8 sm:mt-20 sm:mb-20 md:pt-0 md:pb-0">
+            <div className="w-full max-w-7xl mx-auto pt-8 sm:pt-18~ px-2 sm:px-6 flex-1 flex flex-col mt-8 sm:mt-20 sm:mb-20 md:pt-0 md:pb-0">
               <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
                 <h2 className="text-lg sm:text-2xl font-semibold mb-2 sm:mb-4 text-blue-900">
                   Welcome back, {userName} 👋

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-  import { useAuth } from "../../Components/AuthContext";
+  import { useAuth } from "../../_context/AuthContext";
   import { toast } from "react-toastify";
   import { AdminNav } from "./AdminNav";
   import { Footer } from "../../Components/Footer";
@@ -45,7 +45,7 @@ const AssignmentModalform = ({
     question_file: null,
   });
 
-  const [trackUsers, setTrackUsers] = useState<{ email: string }[]>([]);
+  const [trackUsers, setTrackUsers] = useState<{ id: number; email: string }[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [search, setSearch] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -101,11 +101,11 @@ const AssignmentModalform = ({
   };
 
   // Handle group members change
-  const handleGroupMemberChange = (email: string, checked: boolean) => {
+  const handleGroupMemberChange = (id: number, checked: boolean) => {
   setFormData((f) => {
     const members = checked
-      ? [...f.group_members, email]
-      : f.group_members.filter((m) => m !== email);
+      ? [...f.group_members, id.toString()]
+      : f.group_members.filter((m) => m !== id.toString());
     return { ...f, group_members: members };
   });
 };
@@ -150,6 +150,10 @@ const AssignmentModalform = ({
     if (formData.question_text) form.append("question_text[]", formData.question_text);
     if (formData.question_link) form.append("question_link[]", formData.question_link);
     if (formData.question_file) form.append("question_file[]", formData.question_file);
+    // Append user IDs
+    formData.group_members.forEach((id) => {
+      form.append("user_ids[]", id);
+    });
 
     await onSubmit(form);
   };
@@ -198,20 +202,20 @@ const AssignmentModalform = ({
               value={formData.track}
               onChange={handleChange}
               className="   w-full px-3 py-2 
-    border border-gray-300 rounded-md 
-    bg-white text-gray-700 
-    focus:outline-none focus:ring-2 focus:ring-blue-500 
-    transition
-    text-sm sm:text-basew-full
-    max-w-full
-    px-3 py-2
-    border border-gray-300
-    rounded-md
-    bg-white text-gray-700
-    focus:outline-none focus:ring-2 focus:ring-blue-500
-    transition
-    text-sm sm:text-base
-    truncate"
+              border border-gray-300 rounded-md 
+              bg-white text-gray-700 
+              focus:outline-none focus:ring-2 focus:ring-blue-500 
+              transition
+              text-sm sm:text-basew-full
+              max-w-full
+              px-3 py-2
+              border border-gray-300
+              rounded-md
+              bg-white text-gray-700
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              transition
+              text-sm sm:text-base
+              truncate"
             >
               <option value="Backend-mobile">Backend-mobile</option>
               <option value="Backend-web">Backend-web</option>
@@ -247,17 +251,13 @@ const AssignmentModalform = ({
                   <div className="border rounded p-2 sm:p-3 max-h-40 overflow-y-auto space-y-2">
                     {trackUsers
                       .filter((u) => u.email.toLowerCase().includes(search))
-                      .map((u, idx) => (
-                        <label
-                          key={idx}
-                          className="flex items-center gap-2 cursor-pointer"
-                        >
-                         <input
-                         type="checkbox"
-                         checked={formData.group_members.includes(u.email)}
-                         onChange={(e) => handleGroupMemberChange(u.email, e.target.checked)}
-                        />
-
+                      .map((u) => (
+                        <label key={u.id} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.group_members.includes(u.id.toString())}
+                            onChange={(e) => handleGroupMemberChange(u.id, e.target.checked)}
+                          />
                           <span>{u.email}</span>
                         </label>
                       ))}
@@ -405,4 +405,3 @@ const AssignmentModalform = ({
       </>
     );
   };
-   

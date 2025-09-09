@@ -4,7 +4,7 @@ import { CalendarPage } from "./Components/Calender";
 import { Signup } from "./Pages/auth/Signup";
 import { Login } from "./Pages/auth/Login";
 import { CheckInOut } from "./Pages/CheckInOut";
-import { AuthProvider } from "./Components/AuthContext";
+import { AuthProvider } from "./_context/AuthContext";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import AdminDashboard from "./Pages/admin/AdminDashboard";
 import AdminCheckIn from "./Pages/admin/AdminCheckIn";

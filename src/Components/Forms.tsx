@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AssignmentModal } from "./InternAssignment";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../_context/AuthContext";
 import { Mail, FileDown } from "lucide-react";
 import { format } from "date-fns";
 

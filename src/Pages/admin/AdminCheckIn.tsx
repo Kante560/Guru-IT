@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminNav } from "./AdminNav";
-import { useAuth } from "../../Components/AuthContext";
+import { useAuth } from "../../_context/AuthContext";
 import { toast } from "react-toastify";
 
 interface CheckIn {

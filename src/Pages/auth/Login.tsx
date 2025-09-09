@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Nav } from "../../Components/Nav";
-import { useAuth, useAuthRedirect } from "../../Components/AuthContext";
+import { useAuth, useAuthRedirect } from "../../_context/AuthContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SplitText from "../../ui/SplitText"; // ✅ import GSAP SplitText
@@ -27,11 +27,11 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen font-inter">
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 flex flex-col lg:flex-row font-inter">
       {/* Left Column */}
-      <div className="flex-1 flex flex-col justify-center px-4 sm:px-12 bg-gray-50">
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-12 bg-transparent lg:bg-gray-50">
         <Nav />
-        <div className="max-w-md w-full mx-auto">
+        <div className="max-w-md w-full mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8">
           <h2 className="text-2xl sm:text-3xl text-center font-bold text-gray-900 mb-4 sm:mb-6">
             Welcome Back!
           </h2>
@@ -41,7 +41,7 @@ export const Login = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:shadow-sm focus:border-none focus:shadow-blue-900"
+              className="w-full  rounded-md px-3 py-2 focus:outline-none focus:shadow-sm focus:shadow-blue-500 px-3 py-2 border border-gray-300"
               disabled={loading}
             />
             <input
@@ -49,7 +49,7 @@ export const Login = () => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:shadow-sm focus:border-none focus:shadow-blue-900"
+              className="w-full focus:outline-none focus:shadow-sm focus:shadow-blue-500 px-3 py-2 border border-gray-300 rounded-md px-3 py-2 "
               disabled={loading}
             />
             <button
@@ -73,18 +73,21 @@ export const Login = () => {
       <div className="hidden lg:flex flex-1 bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 text-white relative">
         <div className="absolute top-6 right-8 text-2xl font-bold">Guru-IT</div>
         <div className="m-auto max-w-lg text-center">
-             <SplitText
-                  className="text-xl font-medium leading-relaxed"
-                  delay={60}
-                  duration={0.6}
-                  ease="power3.out"
-                  splitType="words" // animate word by word for nicer readability
-                  from={{ opacity: 0, y: 20 }}
-                  to={{ opacity: 1, y: 0 }}
-        >
-          "Join our community of innovators and take your tech journey to the next level."
-        </SplitText>
-          <p className="mt-4 text-sm opacity-80">-Mr Emmanuel, Co-founder</p>
+          <SplitText
+            className="text-xl font-medium leading-relaxed"
+            delay={60}
+            duration={0.6}
+            ease="power3.out"
+            splitType="words" // animate word by word for nicer readability
+            from={{ opacity: 0, y: 20 }}
+            to={{ opacity: 1, y: 0 }}
+          >
+            "Join our community of innovators and take your tech journey to the
+            next level."
+          </SplitText>
+          <p className="mt-4 text-sm opacity-80">
+            -Mr Emmanuel, Co-founder
+          </p>
         </div>
       </div>
     </div>

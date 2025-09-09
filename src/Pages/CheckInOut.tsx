@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Nav } from "../Components/Nav";
 import { Footer } from "../Components/Footer";
-import { useAuth } from "../Components/AuthContext";
+import { useAuth } from "../_context/AuthContext";
 import { toast } from "react-toastify";
 import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 
