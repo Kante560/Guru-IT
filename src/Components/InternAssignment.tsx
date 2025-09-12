@@ -1,18 +1,22 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+
 
 
 export const AssignmentModal: React.FC<{
   open: boolean;
   onClose: () => void;
 }> = ({ open, onClose }) => {
-  if (!open) return null;
+  // All hooks must be called unconditionally
   const [isGroup, setIsGroup] = useState<boolean | undefined>(undefined);
-  const [ topic, setTopic] = useState("");
-  const [ email, setEmail] = useState("");
-  const [ groupMembers, setGroupMembers] = useState("");
-  const [ link, setLink] = useState("");
-  const [ file, setFile] = useState<File | null>(null);
-  const [ errors, setErrors] = useState<Record<string, string>>({});
+  const [topic, setTopic] = useState("");
+  const [email, setEmail] = useState("");
+  const [groupMembers, setGroupMembers] = useState("");
+  const [link, setLink] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+  if (!open) return null;
 
   const validate = () => {
     const next: Record<string, string> = {};
@@ -32,11 +36,39 @@ export const AssignmentModal: React.FC<{
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    // You can wire this to parent callback if needed in future
-    onClose();
+    setLoading(true);
+    try {
+      const form = new FormData();
+      form.append("topic", topic);
+      form.append("is_group", isGroup ? "true" : "false");
+      form.append("group_members", isGroup ? groupMembers : "[]");
+      form.append("email", email);
+      if (link) form.append("link", link);
+      if (file) form.append("file", file);
+
+      // Add Authorization header if needed (token from context or localStorage)
+      const token = localStorage.getItem("token");
+      const res = await fetch("https://guru-it.vercel.app/assignment", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: form,
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        toast.error(errorText || "Submission failed");
+        setLoading(false);
+        return;
+      }
+      toast.success("Assignment submitted successfully!");
+      onClose();
+    } catch {
+      toast.error("Submission failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -98,8 +130,8 @@ export const AssignmentModal: React.FC<{
             <input onChange={(e)=>setFile(e.target.files?.[0] ?? null)} type="file" className="mt-2 cursor-pointer" />
             {errors.question && <p className="text-red-600 text-sm">{errors.question}</p>}
           </div>
-          <button type="submit" className="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-950">
-            Submit Assignment
+          <button type="submit" className="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-950" disabled={loading}>
+            {loading ? "Submitting..." : "Submit Assignment"}
           </button>
         </form>
       </div>
