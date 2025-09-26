@@ -60,7 +60,7 @@ const AdminAssignmentsList = () => {
                   <span className="font-bold text-blue-900 text-lg">{a.topic}</span>
                   <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">{a.track}</span>
                 </div>
-                <div className="text-gray-700 text-sm mb-2">{a.question}</div>
+                <div className="text-gray-700  text-sm mb-2">{a.question}</div>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {a.allowed_submission_types.map((type) => (
                     <span key={type} className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs">{type}</span>
