@@ -1,4 +1,3 @@
-import React from 'react'
 import { Nav } from '../Components/Nav'
 import { Forms } from '../Components/Forms'
 import { Footer } from '../Components/Footer'

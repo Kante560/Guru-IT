@@ -1,5 +1,5 @@
 // src/components/Footer.tsx
-import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin,  Mail, Phone, MapPin } from 'lucide-react';
 import { Link } from "react-router-dom";
 
 export const Footer = () => {
