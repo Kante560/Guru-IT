@@ -51,7 +51,7 @@ export const Home = () => {
               {/* ✅ Replaced h1 with SplitText */}
               <div className="mb-4 sm:mb-6 md:mb-8">
                <SplitText
-                  className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-w-hite leading-tight drop-shadow text-center"
+                  className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-white leading-tight drop-shadow text-center"
                   delay={80}
                   duration={0.6}
                   ease="power3.out"
