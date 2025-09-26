@@ -73,7 +73,7 @@ export const AssignmentModal: React.FC<{
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-[#00000060] bg-opacity-40 p-2 sm:p-4">
-      <div className="bg-white p-6 sm:p-7 md:p-8 rounded-lg shadow-lg max-w-xl md:max-w-2xl w-full space-y-4 relative">
+      <div className="bg-white p-6 sm:p-7 md:p-8 rounded-lg shadow-lg max-w-xl md:max-w-2xl w-full space-y-4 relative overflow-y-auto" style={{ maxHeight: "80vh" }}>
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-2xl font-bold"
@@ -123,16 +123,55 @@ export const AssignmentModal: React.FC<{
               {errors.groupMembers && <p className="text-red-600 text-sm">{errors.groupMembers}</p>}
             </div>
           )}
-          <div className="flex flex-col space-y-3">
+            <div className="flex flex-col space-y-3">
             <label className="text-sm font-medium">File Upload or Link</label>
-            <input value={link} onChange={(e)=>setLink(e.target.value)} type="text" placeholder="Paste link or upload file below" className="w-full focus:outline-none focus:shadow-sm focus:shadow-blue-500 px-3 py-2 border border-gray-300 rounded" />
+            <input
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              type="text"
+              placeholder="Paste link or upload file below"
+              className="w-full focus:outline-none focus:shadow-sm focus:shadow-blue-500 px-3 py-2 border border-gray-300 rounded"
+            />
             {errors.link && <p className="text-red-600 text-sm">{errors.link}</p>}
-            <input onChange={(e)=>setFile(e.target.files?.[0] ?? null)} type="file" className="mt-2 cursor-pointer" />
+            <label
+              htmlFor="question_file"
+              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+            >
+              {/* Replace with your Upload icon */}
+              <svg className="w-8 h-8 mb-2 text-blue-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M16 12l-4-4m0 0l-4 4m4-4v12" />
+              </svg>
+              <p className="text-sm text-gray-500">
+              <span className="font-medium text-blue-600">Click to upload</span>
+              </p>
+              <p className="text-xs text-gray-400">PNG, JPG, PDF (MAX. 10MB)</p>
+            </label>
+            <input
+              id="question_file"
+              type="file"
+              name="question_file"
+              accept=".png,.jpg,.jpeg,.pdf"
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              className="hidden"
+            />
             {errors.question && <p className="text-red-600 text-sm">{errors.question}</p>}
-          </div>
-          <button type="submit" className="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-950" disabled={loading}>
+            </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-950"
+            disabled={loading}
+            >
             {loading ? "Submitting..." : "Submit Assignment"}
-          </button>
+            </button>
+            <button
+            type="button"
+            className="w-full bg-red-700 text-gray-200 py-2 rounded hover:bg-red-600 mb-2"
+            onClick={onClose}
+            disabled={loading}
+            >
+            Cancel
+            </button>
+            
         </form>
       </div>
     </div>

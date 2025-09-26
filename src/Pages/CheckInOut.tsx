@@ -10,7 +10,7 @@ interface CheckInState {
   checkInTime: string | null;
   currentTime: string;
   elapsedTime: string;
-  status: "pending" | "approved" | "none";
+  status: "pending" | "approved" | "rejected" | "none";
 }
 
 const STORAGE_KEY = "checkInState";
@@ -56,6 +56,7 @@ export const CheckInOut = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [rejectedNotice, setRejectedNotice] = useState(false);
 
   // 🔹 Persist ONLY stable fields (not currentTime/elapsedTime) to avoid writes every second
   useEffect(() => {
@@ -80,6 +81,123 @@ export const CheckInOut = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // On initial load, if a persisted state is 'rejected', reset immediately and alert
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const parsed = JSON.parse(saved);
+      if (parsed?.status === "rejected") {
+        setCheckInState(defaultState);
+        localStorage.removeItem(STORAGE_KEY);
+        setRejectedNotice(true);
+        toast.error("Your previous check-in was rejected for today.");
+        setTimeout(() => setRejectedNotice(false), 10000);
+      }
+    } catch {
+      // ignore parsing errors
+    }
+  }, []);
+
+  // Also check server status when auth token becomes available to reflect any past decision
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+    const checkServerStatus = async () => {
+      try {
+        const res = await fetch("https://guru-it.vercel.app/checkin/current", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+        if (!res.ok) return;
+        const data = await res.json().catch(() => ({} as any));
+        const status = (data?.status as CheckInState["status"]) || undefined;
+        if (cancelled || !status) return;
+
+        if (status === "rejected") {
+          setCheckInState(defaultState);
+          localStorage.removeItem(STORAGE_KEY);
+          setRejectedNotice(true);
+          toast.error("Your check-in request was rejected for today.");
+          setTimeout(() => setRejectedNotice(false), 10000);
+        } else if (
+          status === "approved" &&
+          checkInState.isCheckedIn &&
+          checkInState.status === "pending"
+        ) {
+          setCheckInState((prev) => ({ ...prev, status: "approved" }));
+        }
+      } catch {
+        // ignore
+      }
+    };
+    checkServerStatus();
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
+  // Poll for admin decision while pending
+  useEffect(() => {
+    if (!checkInState.isCheckedIn || checkInState.status !== "pending") return;
+
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const res = await fetch("https://guru-it.vercel.app/checkin/current", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+
+        if (!res.ok) {
+          // If endpoint returns 404, treat as no current request; if we were pending, reset and notify
+          if (res.status === 404 && checkInState.status === "pending") {
+            setCheckInState(defaultState);
+            localStorage.removeItem(STORAGE_KEY);
+            setRejectedNotice(true);
+            toast.error("Your check-in request was rejected for today.");
+            setTimeout(() => setRejectedNotice(false), 10000);
+          }
+          return;
+        }
+
+        const data = await res.json().catch(() => ({} as any));
+        const status = (data?.status as CheckInState["status"]) || undefined;
+
+        if (cancelled || !status) return;
+
+        if (status === "approved") {
+          setCheckInState((prev) => ({ ...prev, status: "approved" }));
+          toast.success("Your check-in was approved. You can now check out.");
+        } else if (status === ("rejected" as any) || status === "none") {
+          // Rejected: reset UI to check-in and alert the user
+          setCheckInState(defaultState);
+          localStorage.removeItem(STORAGE_KEY);
+          setRejectedNotice(true);
+          toast.error("Your check-in request was rejected for today.");
+          // Hide banner after a short duration
+          setTimeout(() => setRejectedNotice(false), 10000);
+        }
+      } catch {
+        // silent failure; will try again on next tick
+      }
+    };
+
+    const interval = setInterval(poll, 8000); // poll every 8 seconds
+    // run once immediately so users get quick feedback
+    poll();
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [checkInState.isCheckedIn, checkInState.status, token]);
 
   function calculateElapsedTime(checkInTime: string): string {
     const start = new Date(checkInTime).getTime();
@@ -115,17 +233,16 @@ export const CheckInOut = () => {
 
       const data = await response.json().catch(() => ({}));
 
-      // Short-term: mark approved locally so user can try checkout
+      // Record pending state locally and start polling for admin decision
       const checkInTime = data.checkInTime || new Date().toISOString();
       setCheckInState((prev) => ({
         ...prev,
         isCheckedIn: true,
         checkInTime,
-        status: "approved",
-        // currentTime/elapsedTime auto-update via timer
+        status: "pending",
       }));
 
-      toast.success("Checked in successfully! You can now check out.");
+      toast.info("Check-in submitted for approval. You'll be notified once decided.");
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "An unexpected error occurred";
       toast.error(msg);
@@ -171,7 +288,7 @@ export const CheckInOut = () => {
   return (
     <>
       <Nav />
-      <div className="min-h-screen bg-white mt-20 p-6">
+      <div className="min-h-screen bg-white mt-25 p-6">
         <h1 className="text-3xl font-extrabold mb-10 text-center text-blue-900 tracking-tight drop-shadow">
           Check In / Out
         </h1>
@@ -180,6 +297,11 @@ export const CheckInOut = () => {
             {/* Only show Check-In card if NOT checked in */}
             {!checkInState.isCheckedIn && (
               <div className="bg-blue-50 border border-blue-200 p-8 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl">
+                {rejectedNotice && (
+                  <div className="mb-4 text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded">
+                    Your check-in request was rejected for today. You may try again later.
+                  </div>
+                )}
                 <div className="flex items-center gap-2 mb-4">
                   <FaSignInAlt className="text-blue-700 text-2xl" />
                   <h2 className="text-xl font-bold text-blue-700">Check In</h2>
@@ -239,6 +361,11 @@ export const CheckInOut = () => {
                   <h2 className="text-xl font-bold text-red-700">Check Out</h2>
                 </div>
                 <div className="text-gray-700 space-y-3">
+                  {checkInState.status === "pending" && (
+                    <div className="text-yellow-700 bg-yellow-50 border border-yellow-200 px-3 py-2 rounded">
+                      Awaiting admin approval. You will be able to check out once approved.
+                    </div>
+                  )}
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">Checked In At:</span>
                     <span className="text-blue-900 font-mono">
@@ -257,9 +384,11 @@ export const CheckInOut = () => {
                   </div>
                   <button
                     onClick={handleCheckOut}
-                    disabled={!checkInState.isCheckedIn || loading}
+                    disabled={
+                      !checkInState.isCheckedIn || checkInState.status !== "approved" || loading
+                    }
                     className={`w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 ${
-                      !checkInState.isCheckedIn
+                      !checkInState.isCheckedIn || checkInState.status !== "approved"
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-red-600 hover:bg-red-700 active:scale-95"
                     } text-white shadow hover:shadow-lg mt-4`}

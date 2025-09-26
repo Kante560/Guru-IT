@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
   import { Footer } from "../../Components/Footer";
   import { Upload } from "lucide-react";
 import UploadButton from "../../ui/Buttons";
+import AdminAssignmentsList from "./AdminAssignmentsList";
 
   // Assignment form state interface
   interface AssignmentForm {
@@ -148,8 +149,8 @@ const AssignmentModalform = ({
     form.append("is_group", formData.is_group.toString());
     form.append("group_members", JSON.stringify(formData.group_members));
     if (formData.question_text) form.append("question_text[]", formData.question_text);
-    if (formData.question_link) form.append("question_link[]", formData.question_link);
-    if (formData.question_file) form.append("question_file[]", formData.question_file);
+    if (formData.question_link) form.append("question_link", formData.question_link);
+    if (formData.question_file) form.append("question_file", formData.question_file);
     // Append user IDs
     formData.group_members.forEach((id) => {
       form.append("user_ids[]", id);
@@ -275,7 +276,7 @@ const AssignmentModalform = ({
             <textarea
               name="question_text"
               onChange={handleChange}
-              placeholder="Question Text"
+              placeholder="Question ....."
               className="w-full focus:outline-none focus:shadow-sm focus:shadow-blue-500 px-3 py-2 border border-gray-300 rounded"
             />
 
@@ -288,31 +289,56 @@ const AssignmentModalform = ({
             />
             {errors.question_link && <p className="text-red-600 text-sm">{errors.question_link}</p>}
 
-        {/* File Upload (styled like a dropzone) */}
-<div>
-  <label className="block font-medium mb-2">Upload File</label>
-  <label
-    htmlFor="question_file"
-    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
-  >
-     <Upload className="w-8 h-8 mb-2" />
-    <p className="text-sm text-gray-500">
-      <span className="font-medium text-blue-600">Click to upload</span>
-    </p>
-    <p className="text-xs text-gray-400">PNG, JPG, PDF (MAX. 10MB)</p>
-  </label>
-  <input
-    id="question_file"
-    type="file"
-    name="question_file"
-    onChange={handleChange}
-    className="hidden"
-  />
-  {errors.question && (
-    <p className="text-red-600 text-sm mt-2">{errors.question}</p>
-  )}
-</div>
-
+       
+        <div>
+          <label className="block font-medium mb-2">Upload File</label>
+          <label
+            htmlFor="question_file"
+            className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+          >
+            <Upload className="w-8 h-8 mb-2" />
+            <p className="text-sm text-gray-500">
+              <span className="font-medium text-blue-600">Click to upload</span>
+            </p>
+            <p className="text-xs text-gray-400">PNG, JPG, PDF (MAX. 10MB)</p>
+            {/* Preview if file is uploaded */}
+            {formData.question_file && (
+              <div className="mt-2 w-full flex flex-col items-center">
+                {/* Image preview */}
+                {formData.question_file.type.startsWith("image/") ? (
+                  <img
+                    src={URL.createObjectURL(formData.question_file)}
+                    alt={formData.question_file.name}
+                    className="max-h-24 rounded shadow mb-1"
+                  />
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-700 font-medium">{formData.question_file.name}</span>
+                    <span className="text-xs text-gray-500">({(formData.question_file.size / 1024).toFixed(1)} KB)</span>
+                  </div>
+                )}
+                {/* Remove file button */}
+                <button
+                  type="button"
+                  className="text-xs text-red-600 underline mt-1"
+                  onClick={() => setFormData((f) => ({ ...f, question_file: null }))}
+                >
+                  Remove file
+                </button>
+              </div>
+            )}
+          </label>
+          <input
+            id="question_file"
+            type="file"
+            name="question_file"
+            onChange={handleChange}
+            className="hidden"
+          />
+          {errors.question && (
+            <p className="text-red-600 text-sm mt-2">{errors.question}</p>
+          )}
+        </div>
 
             <div className="flex flex-col sm:flex-row justify-end gap-2">
               <button
@@ -390,6 +416,7 @@ const AssignmentModalform = ({
     return (
       <>
         <AdminNav />
+        <AdminAssignmentsList />
         <div className="min-h-screen bg-gray-100 pt-20 font-inter relative">
           {/* Floating "+" button to open modal */}
           <UploadButton setIsOpen={setIsOpen} />

@@ -13,6 +13,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AssignmentUpload } from "./Pages/admin/AdminAssignmentForm";
 import { Forms } from "./Components/Forms";
+import UserAssignment from "./Pages/UserAssignment";
+import AdminAssignmentsList from "./Pages/admin/AdminAssignmentsList";
 
 export const App = () => {
   return (
@@ -48,6 +50,14 @@ export const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/assignment"
+          element={
+            <ProtectedRoute role="">
+              <UserAssignment />
+            </ProtectedRoute>
+          }
+        />
 
         {/* ---------- Admin-only Routes ---------- */}
         <Route
@@ -79,6 +89,14 @@ export const App = () => {
           element={
             <ProtectedRoute role="admin">
               <AssignmentUpload />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/adminassignments"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminAssignmentsList />
             </ProtectedRoute>
           }
         />

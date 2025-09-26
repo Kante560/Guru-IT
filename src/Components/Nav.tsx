@@ -43,6 +43,12 @@ export const Nav = () => {
                   >
                     Check-In
                   </Link>
+                  <Link
+                   className="hover:text-black hover:underline"
+                    to="/assignment"
+                  >
+                  Assignments
+                  </Link>
                 </>
               )}
             </div>
@@ -104,6 +110,12 @@ export const Nav = () => {
                     <Link to="/checkinout" onClick={toggleMenu} className="block py-3 rounded-lg hover:bg-white/10">
                       Check-In
                     </Link>
+                    <Link
+                   className="hover:text-black hover:underline"
+                    to="/assignment"
+                  >
+                  Assignments
+                  </Link> 
                     <Link
                       to="/"
                       onClick={(e) => {

@@ -14,11 +14,11 @@ export const Footer = () => {
               Guru Innovation Hub Interns: A platform for aspiring tech professionals to learn, collaborate, and gain real-world experience. Empowering interns to grow, connect, and launch their careers in technology.
             </p>
             <div className="flex justify-center md:justify-start space-x-3 sm:space-x-4 text-2xl">
-              <a href="#" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Facebook"><Facebook size={22} /></a>
-              <a href="#" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Twitter"><Twitter size={22} /></a>
-              <a href="#" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Instagram"><Instagram size={22} /></a>
-              <a href="#" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="LinkedIn"><Linkedin size={22} /></a>
-              <a href="#" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="YouTube"><Youtube size={22} /></a>
+              <a href="https://www.facebook.com/profile.php?id=61579837100361" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Facebook"><Facebook size={22} /></a>
+              <a href="https://x.com/GuruAcademy40?t=0-mNnjpZjbBdHQPmoJtQDA&s=08" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Twitter"><Twitter size={22} /></a>
+              <a href="https://www.instagram.com/gurulearn_?utm_source=qr&igsh=ZXY3MDhhNnplMjV3" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Instagram"><Instagram size={22} /></a>
+              <a href="https://www.linkedin.com/company/guru-academy2/" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="LinkedIn"><Linkedin size={22} /></a>
+              {/* <a href="#" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="YouTube"><Youtube size={22} /></a> */}
             </div>
           </div>
           {/* Quick Links */}
@@ -33,7 +33,7 @@ export const Footer = () => {
           <div className="text-center md:text-left">
             <h3 className="text-lg font-semibold mb-3 sm:mb-4 text-white">Contact Us</h3>
             <ul className="space-y-2 text-[#D1D5DB] text-sm md:text-[15px]">
-              <li className="flex items-center justify-center md:justify-start"><Mail size={18} className="mr-2" /> guruIhub@gmail.com</li>
+              <li className="flex items-center justify-center md:justify-start"><Mail size={18} className="mr-2" /> guruacademy40@gmail.com</li>
               <li className="flex items-center justify-center md:justify-start"><Phone size={18} className="mr-2" /> +234 (810) 525-25866</li>
               <li className="flex items-center justify-center md:justify-start"><MapPin size={18} className="mr-2" /> Calabar, Nigeria</li>
             </ul>

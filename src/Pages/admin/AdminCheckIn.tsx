@@ -16,6 +16,7 @@ interface CheckIn {
 const AdminCheckIn = () => {
   const [pendingCheckins, setPendingCheckins] = useState<CheckIn[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("");
   const { token } = useAuth();
 
   useEffect(() => {
@@ -122,69 +123,80 @@ const AdminCheckIn = () => {
     );
   }
 
+  // Filter checkins by name, reg_no, or track
+  const filteredCheckins = pendingCheckins.filter((checkin) => {
+    const search = filter.trim().toLowerCase();
+    if (!search) return true;
+    return (
+      (checkin.name?.toLowerCase() || "").includes(search) ||
+      (checkin.track?.toLowerCase() || "").includes(search)
+    );
+  });
+
   return (
     <div className="min-h-screen bg-gray-100 pt-20 font-inter">
       <AdminNav />
       <div className="max-w-7xl mx-auto p-2 sm:p-6 mt-8 sm:mt-12 w-full">
-      <h2 className="text-lg sm:text-2xl font-semibold mb-4 sm:mb-6">
-        Pending Check-Ins
-      </h2>
-      <div className="w-full overflow-x-auto">
-        <table className="min-w-[600px] w-full bg-white border border-gray-200 shadow rounded-md text-xs sm:text-sm">
-        <thead>
-          <tr className="bg-blue-100 text-left font-semibold text-gray-700">
-          <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Name</th>
-          <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Reg. No.</th>
-          <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Track</th>
-          <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">
-            Check-in Time
-          </th>
-          <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Status</th>
-          <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Action</th>
-          </tr>
-        </thead>  
-        <tbody>
-          {pendingCheckins.map((checkin) => (
-          <tr key={checkin.id} className="text-xs sm:text-sm text-gray-700">
-            <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[120px]">{checkin.name}</td>
-            <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[100px]">{checkin.reg_no}</td>
-            <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[100px]">{checkin.track}</td>
-            <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[140px]">{checkin.checkInTime}</td>
-            <td className="py-2 px-2 sm:px-4 border-b">
-            <span
-              className={`${getStatusClasses(
-              checkin.status
-              )} px-2 py-1 rounded-full text-xs`}
-            >
-              {checkin.status}
-            </span>
-            </td>
-            <td className="py-2 px-2 sm:px-4 border-b">
-            <div className="flex flex-col sm:flex-row gap-2">
-              <button
-              onClick={() => handleUpdateStatus(checkin.id, "approved")}
-              className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs"
-              >
-              Approve
-              </button>
-              <button
-              onClick={() => handleUpdateStatus(checkin.id, "rejected")}
-              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
-              >
-              Reject
-              </button>
-            </div>
-            </td>
-          </tr>
-          ))}
-        </tbody>
-        </table>
-        {pendingCheckins.length === 0 && (
-        <div className="text-center py-4 text-gray-500">
-          No pending check-ins found
+        <h2 className="text-lg sm:text-2xl font-semibold mb-4 sm:mb-6">
+          Pending Check-Ins
+        </h2>
+        <div className="mb-4 flex items-center gap-2">
+          <input
+            type="text"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            placeholder="Search by name or track..."
+            className="border border-gray-300 rounded px-3 py-2 w-full max-w-xs focus:outline-none focus:ring focus:ring-blue-200"
+          />
         </div>
-        )}
-      </div>
+        <div className="w-full overflow-x-auto">
+          <table className="min-w-[600px] w-full bg-white border border-gray-200 shadow rounded-md text-xs sm:text-sm">
+            <thead>
+              <tr className="bg-blue-100 text-left font-semibold text-gray-700">
+                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Name</th>
+                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Track</th>
+                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Check-in Time</th>
+                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Status</th>
+                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCheckins.map((checkin) => (
+                <tr key={checkin.id} className="text-xs sm:text-sm text-gray-700">
+                  <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[120px]">{checkin.name}</td>
+                  <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[100px]">{checkin.track}</td>
+                  <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[140px]">{checkin.checkInTime}</td>
+                  <td className="py-2 px-2 sm:px-4 border-b">
+                    <span className={`${getStatusClasses(checkin.status)} px-2 py-1 rounded-full text-xs`}>
+                      {checkin.status}
+                    </span>
+                  </td>
+                  <td className="py-2 px-2 sm:px-4 border-b">
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <button
+                        onClick={() => handleUpdateStatus(checkin.id, "approved")}
+                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handleUpdateStatus(checkin.id, "rejected")}
+                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {filteredCheckins.length === 0 && (
+            <div className="text-center py-4 text-gray-500">
+              No pending check-ins found
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

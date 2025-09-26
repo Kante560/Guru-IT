@@ -13,7 +13,8 @@ interface User {
 const UsersPage = () => {
   const { token } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("");
 
   // Debug: Log the token to verify if it's present
   useEffect(() => {
@@ -51,6 +52,17 @@ const UsersPage = () => {
     fetchUsers();
   }, [token]);
 
+  // Filter users by name, email, or track
+  const filteredUsers = users.filter((user) => {
+    const search = filter.trim().toLowerCase();
+    if (!search) return true;
+    return (
+      (user.name?.toLowerCase() || "").includes(search) ||
+      (user.email?.toLowerCase() || "").includes(search) ||
+      (user.track?.toLowerCase() || "").includes(search)
+    );
+  });
+
   return (
     <>
       <AdminNav />
@@ -58,6 +70,15 @@ const UsersPage = () => {
         <h2 className="text-lg sm:text-2xl font-bold mb-2 sm:mb-4 text-center">
           Registered Users
         </h2>
+        <div className="mb-4 flex items-center justify-center gap-2">
+          <input
+            type="text"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            placeholder="Search by name, email, or track..."
+            className="border border-gray-300 rounded px-3 py-2 w-full max-w-xs focus:outline-none focus:ring focus:ring-blue-200"
+          />
+        </div>
         {loading ? (
           <div className="min-h-[60vh] bg-gray-100 pt-6 sm:pt-10 pb-6 sm:pb-10 font-inter flex flex-col items-center justify-center">
             <div className="w-full max-w-4xl bg-white rounded-md shadow p-2 sm:p-4 md:p-8 mt-6 sm:mt-12">
@@ -116,7 +137,7 @@ const UsersPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map((user, idx) => (
+                    {filteredUsers.map((user, idx) => (
                       <tr key={idx} className="text-xs sm:text-sm hover:bg-blue-50">
                         <td className="py-2 px-2 sm:px-4 border-b break-all">{user.name}</td>
                         <td className="py-2 px-2 sm:px-4 border-b break-all">{user.email}</td>
