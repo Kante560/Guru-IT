@@ -121,19 +121,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(err.message || "Registration failed");
       }
 
-      const result: LoginResponse = await res.json();
+      // Even if backend returns a token, we won't auto-login on signup.
+      // Parse response (in case UI needs to show any info), then route to login.
+      await res.json().catch(() => ({}));
 
-      if (!result.token) throw new Error("No token in response");
-
-      // Persist auth
-      localStorage.setItem("token", result.token);
-      localStorage.setItem("user", JSON.stringify(result.user));
-
-      setToken(result.token);
-      setUser(result.user);
-      setIsAuthenticated(true);
-
-      navigate(result.user.role === "admin" ? "/admindashboard" : "/");
+      toast.success("Registration successful! Please log in.");
+      navigate("/login");
     } catch (e: unknown) {
       const errorMessage =
         e instanceof Error ? e.message : "An unexpected error occurred";
