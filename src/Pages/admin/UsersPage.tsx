@@ -20,6 +20,7 @@ const UsersPage = () => {
   useEffect(() => {
     console.log("Auth token:", token);
   }, [token]);
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
