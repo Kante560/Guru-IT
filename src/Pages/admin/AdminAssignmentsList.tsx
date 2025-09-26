@@ -48,7 +48,7 @@ const AdminAssignmentsList = () => {
         <h2 className="text-lg sm:text-2xl font-semibold mb-4 sm:mb-6 text-center">Submitted Assignments</h2>
         {loading ? (
           <div className="flex justify-center items-center min-h-[40vh]">
-            <div className="animate-spin  rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-900"></div>
+            <div className="animate-spin  rounded-full h-12 w-12 border-t-2 border-b-2  border-blue-900"></div>
           </div>
         ) : assignments.length === 0 ? (
           <div className="text-center py-8 text-gray-500">No assignments found.</div>
