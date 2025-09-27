@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AdminNav } from "./AdminNav";
 import { useAuth } from "../../_context/AuthContext";
 import { toast } from "react-toastify";
@@ -13,10 +13,26 @@ interface CheckIn {
   status: string;
 }
 
+interface AttendanceItem {
+  id: number;
+  name: string;
+  email?: string;
+  reg_no?: string;
+  track: string;
+  date: string; // YYYY-MM-DD
+}
+
 const AdminCheckIn = () => {
   const [pendingCheckins, setPendingCheckins] = useState<CheckIn[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
+  const [activeTab, setActiveTab] = useState<"pending" | "attendance">("pending");
+
+  // Attendance state
+  const [attendance, setAttendance] = useState<AttendanceItem[]>([]);
+  const [attendanceLoading, setAttendanceLoading] = useState(false);
+  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const [attendanceDate, setAttendanceDate] = useState<string>(today);
   const { token } = useAuth();
 
   useEffect(() => {
@@ -65,6 +81,53 @@ const AdminCheckIn = () => {
 
     fetchCheckins();
   }, [token]);
+
+  // Fetch daily attendance when the tab is active or date changes
+  useEffect(() => {
+    if (activeTab !== "attendance") return;
+    if (!attendanceDate) return;
+    const fetchAttendance = async () => {
+      setAttendanceLoading(true);
+      try {
+        const url = `https://guru-it.vercel.app/admin/attendance?date=${encodeURIComponent(attendanceDate)}`;
+        const res = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+        if (!res.ok) {
+          const t = await res.text();
+          throw new Error(t || "Failed to fetch attendance");
+        }
+        const data = await res.json();
+        let items: AttendanceItem[] = [];
+        if (Array.isArray(data)) {
+          items = data as AttendanceItem[];
+        } else if (data && Array.isArray(data.attendance)) {
+          items = data.attendance as AttendanceItem[];
+        }
+        // Normalize fields
+        const normalized = (items || []).map((x: any) => ({
+          id: Number(x.id ?? x.user_id ?? x.reg_no ?? Math.random()),
+          name: String(x.name || "Unknown"),
+          email: x.email || undefined,
+          reg_no: x.reg_no || undefined,
+          track: String(x.track || ""),
+          date: String(x.date || attendanceDate),
+        }));
+        setAttendance(normalized);
+      } catch (e: any) {
+        console.error(e);
+        toast.error(e?.message || "Failed to fetch attendance");
+        setAttendance([]);
+      } finally {
+        setAttendanceLoading(false);
+      }
+    };
+    fetchAttendance();
+  }, [activeTab, attendanceDate, token]);
 
   const handleUpdateStatus = async (
     id: number,
@@ -115,15 +178,7 @@ const AdminCheckIn = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 pt-20 font-inter flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-900"></div>
-      </div>
-    );
-  }
-
-  // Filter checkins by name, reg_no, or track
+  // Filter checkins by name or track
   const filteredCheckins = pendingCheckins.filter((checkin) => {
     const search = filter.trim().toLowerCase();
     if (!search) return true;
@@ -137,66 +192,171 @@ const AdminCheckIn = () => {
     <div className="min-h-screen bg-gray-100 pt-20 font-inter">
       <AdminNav />
       <div className="max-w-7xl mx-auto p-2 sm:p-6 mt-8 sm:mt-12 w-full">
-        <h2 className="text-lg sm:text-2xl font-semibold mb-4 sm:mb-6">
-          Pending Check-Ins
-        </h2>
-        <div className="mb-4 flex items-center gap-2">
-          <input
-            type="text"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            placeholder="Search by name or track..."
-            className="border border-gray-300 rounded px-3 py-2 w-full max-w-xs focus:outline-none focus:ring focus:ring-blue-200"
-          />
+        {/* Tabs */}
+        <div className="flex gap-2 border-b border-gray-200 mb-6">
+          <button
+            className={`px-4 py-2 rounded-t ${
+              activeTab === "pending" ? "bg-white border border-b-0" : "bg-gray-100"
+            }`}
+            onClick={() => setActiveTab("pending")}
+          >
+            Pending Check-Ins
+          </button>
+          <button
+            className={`px-4 py-2 rounded-t ${
+              activeTab === "attendance" ? "bg-white border border-b-0" : "bg-gray-100"
+            }`}
+            onClick={() => setActiveTab("attendance")}
+          >
+            Daily Attendance
+          </button>
         </div>
-        <div className="w-full overflow-x-auto">
-          <table className="min-w-[600px] w-full bg-white border border-gray-200 shadow rounded-md text-xs sm:text-sm">
-            <thead>
-              <tr className="bg-blue-100 text-left font-semibold text-gray-700">
-                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Name</th>
-                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Track</th>
-                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Check-in Time</th>
-                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Status</th>
-                <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCheckins.map((checkin) => (
-                <tr key={checkin.id} className="text-xs sm:text-sm text-gray-700">
-                  <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[120px]">{checkin.name}</td>
-                  <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[100px]">{checkin.track}</td>
-                  <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[140px]">{checkin.checkInTime}</td>
-                  <td className="py-2 px-2 sm:px-4 border-b">
-                    <span className={`${getStatusClasses(checkin.status)} px-2 py-1 rounded-full text-xs`}>
-                      {checkin.status}
-                    </span>
-                  </td>
-                  <td className="py-2 px-2 sm:px-4 border-b">
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <button
-                        onClick={() => handleUpdateStatus(checkin.id, "approved")}
-                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => handleUpdateStatus(checkin.id, "rejected")}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {filteredCheckins.length === 0 && (
-            <div className="text-center py-4 text-gray-500">
-              No pending check-ins found
+
+        {activeTab === "pending" && (
+          <>
+            <h2 className="text-lg sm:text-2xl font-semibold mb-4 sm:mb-6">Pending Check-Ins</h2>
+            <div className="mb-4 flex items-center gap-2">
+              <input
+                type="text"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                placeholder="Search by name or track..."
+                className="border border-gray-300 rounded px-3 py-2 w-full max-w-xs focus:outline-none focus:ring focus:ring-blue-200"
+              />
             </div>
-          )}
-        </div>
+            {loading ? (
+              <div className="flex justify-center items-center min-h-[40vh]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-900"></div>
+              </div>
+            ) : (
+              <div className="w-full overflow-x-auto">
+                <table className="min-w-[600px] w-full bg-white border border-gray-200 shadow rounded-md text-xs sm:text-sm">
+                  <thead>
+                    <tr className="bg-blue-100 text-left font-semibold text-gray-700">
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Name</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Track</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Check-in Time</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Status</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredCheckins.map((checkin) => (
+                      <tr key={checkin.id} className="text-xs sm:text-sm text-gray-700">
+                        <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[120px]">{checkin.name}</td>
+                        <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[100px]">{checkin.track}</td>
+                        <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[140px]">{checkin.checkInTime}</td>
+                        <td className="py-2 px-2 sm:px-4 border-b">
+                          <span className={`${getStatusClasses(checkin.status)} px-2 py-1 rounded-full text-xs`}>
+                            {checkin.status}
+                          </span>
+                        </td>
+                        <td className="py-2 px-2 sm:px-4 border-b">
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <button
+                              onClick={() => handleUpdateStatus(checkin.id, "approved")}
+                              className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleUpdateStatus(checkin.id, "rejected")}
+                              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {filteredCheckins.length === 0 && (
+                  <div className="text-center py-4 text-gray-500">No pending check-ins found</div>
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {activeTab === "attendance" && (
+          <>
+            <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <input
+                  type="date"
+                  value={attendanceDate}
+                  onChange={(e) => setAttendanceDate(e.target.value)}
+                  className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
+                />
+              </div>
+              <div className="flex-1"></div>
+              <div className="flex gap-2">
+                <button
+                  onClick={async () => {
+                    try {
+                      const url = `https://guru-it.vercel.app/admin/attendance/download?date=${encodeURIComponent(attendanceDate)}`;
+                      const res = await fetch(url, {
+                        headers: { Authorization: `Bearer ${token}` },
+                      });
+                      if (!res.ok) {
+                        const t = await res.text();
+                        throw new Error(t || "Failed to download CSV");
+                      }
+                      const blob = await res.blob();
+                      const link = document.createElement("a");
+                      link.href = URL.createObjectURL(blob);
+                      link.download = `attendance_${attendanceDate}.csv`;
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                    } catch (e: any) {
+                      toast.error(e?.message || "Download failed");
+                    }
+                  }}
+                  className="bg-blue-900 hover:bg-blue-950 text-white px-4 py-2 rounded shadow"
+                >
+                  Download CSV
+                </button>
+              </div>
+            </div>
+
+            {attendanceLoading ? (
+              <div className="flex justify-center items-center min-h-[40vh]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-900"></div>
+              </div>
+            ) : (
+              <div className="w-full overflow-x-auto">
+                <table className="min-w-[700px] w-full bg-white border border-gray-200 shadow rounded-md text-xs sm:text-sm">
+                  <thead>
+                    <tr className="bg-blue-100 text-left font-semibold text-gray-700">
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Name</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Email</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Reg No</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Track</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {attendance.map((a) => (
+                      <tr key={`${a.id}-${a.date}`} className="text-xs sm:text-sm text-gray-700">
+                        <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[160px]">{a.name}</td>
+                        <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[200px]">{a.email || "-"}</td>
+                        <td className="py-2 px-2 sm:px-4 border-b">{a.reg_no || "-"}</td>
+                        <td className="py-2 px-2 sm:px-4 border-b">{a.track}</td>
+                        <td className="py-2 px-2 sm:px-4 border-b">{a.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {attendance.length === 0 && (
+                  <div className="text-center py-4 text-gray-500">No attendance found for this date</div>
+                )}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

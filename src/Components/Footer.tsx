@@ -14,10 +14,10 @@ export const Footer = () => {
               Guru Innovation Hub Interns: A platform for aspiring tech professionals to learn, collaborate, and gain real-world experience. Empowering interns to grow, connect, and launch their careers in technology.
             </p>
             <div className="flex justify-center md:justify-start space-x-3 sm:space-x-4 text-2xl">
-              <a href="https://www.facebook.com/profile.php?id=61579837100361" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Facebook"><Facebook size={22} /></a>
-              <a href="https://x.com/GuruAcademy40?t=0-mNnjpZjbBdHQPmoJtQDA&s=08" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Twitter"><Twitter size={22} /></a>
-              <a href="https://www.instagram.com/gurulearn_?utm_source=qr&igsh=ZXY3MDhhNnplMjV3" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Instagram"><Instagram size={22} /></a>
-              <a href="https://www.linkedin.com/company/guru-academy2/" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="LinkedIn"><Linkedin size={22} /></a>
+              <a href="https://www.facebook.com/profile.php?id=61579837100361" className="hover:text-gray-400 p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Facebook"><Facebook size={22} /></a>
+              <a href="https://x.com/GuruAcademy40?t=0-mNnjpZjbBdHQPmoJtQDA&s=08" className="hover:text-gray-400 p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Twitter"><Twitter size={22} /></a>
+              <a href="https://www.instagram.com/gurulearn_?utm_source=qr&igsh=ZXY3MDhhNnplMjV3" className="hover:text-gray-400 p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="Instagram"><Instagram size={22} /></a>
+              <a href="https://www.linkedin.com/company/guru-academy2/" className="hover:text-gray-400 p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="LinkedIn"><Linkedin size={22} /></a>
               {/* <a href="#" className="hover:text-[#1D3A8A] p-2 rounded-md focus-visible:ring-2 focus-visible:ring-white/50" aria-label="YouTube"><Youtube size={22} /></a> */}
             </div>
           </div>
@@ -25,8 +25,8 @@ export const Footer = () => {
           <div className="text-center md:text-left">
             <h3 className="text-lg font-semibold mb-3 sm:mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2 text-sm md:text-[15px]">
-              <li><Link to="/" className="hover:text-[#1D3A8A]">Home</Link></li>
-              <li><Link to="/checkinout" className="hover:text-[#1D3A8A]">Check-In/Out</Link></li>
+              <li><Link to="/" className="hover:underline">Home</Link></li>
+              <li><Link to="/checkinout" className="hover:underline">Check-In/Out</Link></li>
             </ul>
           </div>
           {/* Contact Info */}  

@@ -58,7 +58,7 @@ export const Signup = () => {
         </div>
       </div>
       {/* Left Column (Form) */}
-      <div className="flex-1 flex flex-col justify-center px-4 sm:px-10 md:px-16 bg-transparent lg:bg-gray-50">
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-15 md:px-16 bg-transparent lg:bg-gray-50">
         <Nav />
         <div className="w-full max-w-sm md:max-w-md mt-16 sm:mt-[8rem] mx-auto mb-4 bg-white rounded-xl shadow-lg p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-6 text-center">

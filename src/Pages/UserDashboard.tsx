@@ -38,8 +38,8 @@ export const Home = () => {
 
         </div>
       ) : (
-        <div className="min-h-screen w-full bg-unauth-home">
-          <div className="font-inter min-h-screen flex items-center justify-center relative overflow-hidden px-2 sm:px-0 md:px-6">
+        <div className="min-h-[80vh] w-full bg-unauth-home pt-28 sm:pt-32 md:pt-40 pb-12">
+          <div className="font-inter min-h-[90vh] flex items-center justify-center relative overflow-hidden px-3 sm:px-4 md:px-6">
             {/* Animated shooting stars */}
             <div className="absolute top-[20%] left-[10%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[3s]"></div>
             <div className="absolute top-[40%] left-[20%] w-[1px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[6s]"></div>
@@ -47,7 +47,7 @@ export const Home = () => {
             <div className="absolute top-[80%] left-[40%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[15s]"></div>
             <div className="absolute top-[20%] right-[10%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[3s]"></div>
 
-            <div className="flex items-center flex-col px-2 sm:px-4 md:px-8 max-w-4xl mx-auto bg-white/10 backdrop-blur-lg rounded-2xl md:rounded-3xl shadow-2xl p-4 sm:p-10 md:p-12 border border-blue-900/10 transition-all duration-300 hover:shadow-3xl">
+            <div className="flex items-center flex-col w-full max-w-3xl sm:max-w-4xl md:max-w-5xl mx-auto bg-white/10 backdrop-blur-lg rounded-2xl md:rounded-3xl shadow-2xl ring-1 ring-white/20 p-4 sm:p-8 md:p-10 md:py-5 border border-blue-900/10 transition-all duration-300 hover:shadow-3xl">
               {/* ✅ Replaced h1 with SplitText */}
               <div className="mb-4 sm:mb-6 md:mb-8">
                <SplitText

@@ -83,7 +83,7 @@ export const Nav = () => {
 
             {/* Mobile Toggle Button */}
             <button
-              className="md:hidden text-gray-700 focus:outline-none p-2.5 rounded-lg focus-visible:ring-2 focus-visible:ring-blue-500 active:scale-95 transition"
+              className="md:hidden text-white focus:outline-none p-2.5 rounded-lg focus-visible:ring-2 focus-visible:ring-blue-500 active:scale-95 transition"
               onClick={toggleMenu}
               aria-label="Toggle menu"
               aria-controls="mobile-menu"

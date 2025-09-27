@@ -2,7 +2,6 @@ import { AdminNav } from "./AdminNav";
 import { useAuth } from "../../_context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { Footer } from "../../Components/Footer";
 
 const AdminDashboard = () => {
   const { isAuthenticated } = useAuth();
@@ -28,7 +27,7 @@ const AdminDashboard = () => {
   }
   return (
     <>
-      <div className="bg-admin-dashboard min-h-[150vh] flex flex-col">
+      <div className="bg-admin-dashboard min-h-[100vh] flex flex-col">
         <div className="flex-1 flex flex-col font-inter">
           <AdminNav />
           <div className="flex-1 flex flex-col justify-center items-center" style={{ minHeight: "50vh" }}>
@@ -50,8 +49,7 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-        <div style={{ minHeight: "50vh" }} />
-        <Footer />
+     
       </div>
     </>
   )

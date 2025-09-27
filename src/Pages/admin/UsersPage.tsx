@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../_context/AuthContext";
-import { Footer } from "../../Components/Footer";
 import { AdminNav } from "./AdminNav";
 
 interface User {
@@ -157,7 +156,7 @@ const UsersPage = () => {
           </div>
         )}
       </div>
-      <Footer />
+    
     </>
   );
 };

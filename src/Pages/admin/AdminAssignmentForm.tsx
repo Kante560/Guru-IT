@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
   import { useAuth } from "../../_context/AuthContext";
   import { toast } from "react-toastify";
   import { AdminNav } from "./AdminNav";
-  import { Footer } from "../../Components/Footer";
   import { Upload } from "lucide-react";
 import UploadButton from "../../ui/Buttons";
 import AdminAssignmentsList from "./AdminAssignmentsList";
@@ -428,7 +427,6 @@ const AssignmentModalform = ({
             loading={loading}
           />
         </div>
-        <Footer />
       </>
     );
   };
