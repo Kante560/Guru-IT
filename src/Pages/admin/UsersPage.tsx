@@ -14,6 +14,8 @@ const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Debug: Log the token to verify if it's present
   useEffect(() => {
@@ -63,6 +65,19 @@ const UsersPage = () => {
     );
   });
 
+  // Reset to first page when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
+
+  // Pagination calculations
+  const totalItems = filteredUsers.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const safePage = Math.min(Math.max(1, currentPage), totalPages);
+  const startIndex = (safePage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalItems);
+  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+
   return (
     <>
       <AdminNav />
@@ -90,6 +105,9 @@ const UsersPage = () => {
                   <thead>
                     <tr className="bg-blue-100 text-left font-semibold text-gray-700">
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">
+                        <div className="h-4 w-8 bg-gray-200 rounded animate-pulse"></div>
+                      </th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">
                         <div className="h-4 w-12 sm:w-16 bg-gray-200 rounded animate-pulse"></div>
                       </th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">
@@ -103,6 +121,9 @@ const UsersPage = () => {
                   <tbody>
                     {[...Array(5)].map((_, idx) => (
                       <tr key={idx} className="text-xs sm:text-sm">
+                        <td className="py-2 px-2 sm:px-4 border-b">
+                          <div className="h-4 w-6 bg-gray-200 rounded animate-pulse"></div>
+                        </td>
                         <td className="py-2 px-2 sm:px-4 border-b">
                           <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
                         </td>
@@ -131,14 +152,16 @@ const UsersPage = () => {
                 <table className="min-w-[400px] sm:min-w-full text-xs sm:text-sm">
                   <thead>
                     <tr className="bg-blue-100 text-left font-semibold text-gray-700">
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b w-12">No.</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Name</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Email</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Track</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredUsers.map((user, idx) => (
-                      <tr key={idx} className="text-xs sm:text-sm hover:bg-blue-50">
+                    {paginatedUsers.map((user, idx) => (
+                      <tr key={`${user.email}-${startIndex + idx}`} className="text-xs sm:text-sm hover:bg-blue-50">
+                        <td className="py-2 px-2 sm:px-4 border-b text-gray-600">{startIndex + idx + 1}</td>
                         <td className="py-2 px-2 sm:px-4 border-b break-all">{user.name}</td>
                         <td className="py-2 px-2 sm:px-4 border-b break-all">{user.email}</td>
                         <td className="py-2 px-2 sm:px-4 border-b">{user.track}</td>
@@ -146,9 +169,51 @@ const UsersPage = () => {
                     ))}
                   </tbody>
                 </table>
-                {users.length === 0 && (
+                {filteredUsers.length === 0 && (
                   <div className="text-center text-gray-500 py-8">
                     No users found.
+                  </div>
+                )}
+                {/* Pagination Controls */}
+                {filteredUsers.length > 0 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+                    <div className="text-gray-600 text-xs sm:text-sm">
+                      Showing <span className="font-semibold">{totalItems === 0 ? 0 : startIndex + 1}</span>-
+                      <span className="font-semibold">{endIndex}</span> of <span className="font-semibold">{totalItems}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="px-3 py-1 rounded border text-sm disabled:opacity-50"
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={safePage === 1}
+                      >
+                        Prev
+                      </button>
+                      <span className="text-sm">
+                        Page <span className="font-semibold">{safePage}</span> of <span className="font-semibold">{totalPages}</span>
+                      </span>
+                      <button
+                        className="px-3 py-1 rounded border text-sm disabled:opacity-50"
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={safePage === totalPages}
+                      >
+                        Next
+                      </button>
+                      <select
+                        className="ml-2 border rounded px-2 py-1 text-sm"
+                        value={pageSize}
+                        onChange={(e) => {
+                          const newSize = parseInt(e.target.value, 10);
+                          setPageSize(newSize);
+                          setCurrentPage(1);
+                        }}
+                      >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                      </select>
+                    </div>
                   </div>
                 )}
               </div>

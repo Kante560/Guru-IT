@@ -129,6 +129,28 @@ const AdminCheckIn = () => {
     fetchAttendance();
   }, [activeTab, attendanceDate, token]);
 
+  const handleDownloadAttendance = async () => {
+    try {
+      const url = `https://guru-it.vercel.app/admin/attendance/csv`;
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const t = await res.text();
+        throw new Error(t || "Failed to download CSV");
+      }
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `attendance_${attendanceDate}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (e: any) {
+      toast.error(e?.message || "Download failed");
+    }
+  };
+
   const handleUpdateStatus = async (
     id: number,
     status: "approved" | "rejected"
@@ -294,27 +316,7 @@ const AdminCheckIn = () => {
               <div className="flex-1"></div>
               <div className="flex gap-2">
                 <button
-                  onClick={async () => {
-                    try {
-                      const url = `https://guru-it.vercel.app/admin/attendance/download?date=${encodeURIComponent(attendanceDate)}`;
-                      const res = await fetch(url, {
-                        headers: { Authorization: `Bearer ${token}` },
-                      });
-                      if (!res.ok) {
-                        const t = await res.text();
-                        throw new Error(t || "Failed to download CSV");
-                      }
-                      const blob = await res.blob();
-                      const link = document.createElement("a");
-                      link.href = URL.createObjectURL(blob);
-                      link.download = `attendance_${attendanceDate}.csv`;
-                      document.body.appendChild(link);
-                      link.click();
-                      link.remove();
-                    } catch (e: any) {
-                      toast.error(e?.message || "Download failed");
-                    }
-                  }}
+                  onClick={handleDownloadAttendance}
                   className="bg-blue-900 hover:bg-blue-950 text-white px-4 py-2 rounded shadow"
                 >
                   Download CSV
