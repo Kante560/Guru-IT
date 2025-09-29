@@ -178,25 +178,28 @@ const AssignmentModalform = ({
               className=" w-full focus:outline-none focus:shadow-sm focus:shadow-blue-500 px-3 py-2 border border-gray-300 rounded"
             />
             {errors.topic && <p className="text-red-600 text-sm">{errors.topic}</p>}
-
-            <input
+            <div className="" >
+              <label htmlFor="date" className="block font-medium mb-2">Date of deadline</label>
+              <input
               type="date"
               name="date"
-              placeholder="Date of deadline"
               value={formData.date}
               onChange={handleChange}
               className="w-full focus:outline-none focus:shadow-sm focus:shadow-blue-500 px-3 py-2 border border-gray-300 rounded"
             />
-            {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}
+            {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}</div>
+            
 
-
-            <input
+            <div className="" >
+              <label htmlFor="time" className="block font-medium mb-2">Time of deadline</label>
+              <input
               type="time"
               name="time"
               value={formData.time}
               onChange={handleChange}
               className="w-full focus:outline-none focus:shadow-sm focus:shadow-blue-500 px-3 py-2 border border-gray-300 rounded"
-            />
+            /></div>
+            
             {errors.time && <p className="text-red-600 text-sm">{errors.time}</p>}
 
             <select

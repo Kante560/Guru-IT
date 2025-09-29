@@ -82,7 +82,7 @@ const AdminCheckIn = () => {
     };
 
     fetchCheckins();
-  }, [token, pendingPage, pendingPageSize]);
+  }, [token, pendingPage,activeTab, pendingPageSize]);
 
   // Fetch daily attendance when the tab is active or date changes
   useEffect(() => {

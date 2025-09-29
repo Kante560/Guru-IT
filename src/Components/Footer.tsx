@@ -9,7 +9,7 @@ export const Footer = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 sm:gap-10 md:gap-12 pb-8">
           {/* Brand & Social */}
           <div className="text-center md:text-left">
-            <img src="/gurudevs.png" alt="Guru Innovation Hub" className="w-28 sm:w-36 md:w-40 mx-auto md:mx-0 mb-4 rounded-md " />
+            <img src="/gurudevs.svg" alt="Guru Innovation Hub" className="w-28 sm:w-36 md:w-40 mx-auto md:mx-0 mb-4 rounded-md " />
             <p className="mb-6 text-[#D1D5DB] text-sm leading-relaxed">
               Guru Innovation Hub Interns: A platform for aspiring tech professionals to learn, collaborate, and gain real-world experience. Empowering interns to grow, connect, and launch their careers in technology.
             </p>
