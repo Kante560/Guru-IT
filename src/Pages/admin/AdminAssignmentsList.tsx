@@ -68,8 +68,8 @@ const AdminAssignmentsList = () => {
                 </div>
                 <div className="flex justify-between text-xs text-gray-500">
                   <span>Deadline: {a.deadline}</span>
-                  <span>Date: {a.date}</span>
-                  <span>Time: {a.time}</span>
+                  <span>Date of deadline: {a.date}</span>
+                  <span>Time of deadline: {a.time}</span>
                 </div>
                 <div className="mt-2 text-xs">
                   <span className="font-semibold">Group:</span> {a.is_group ? "Yes" : "No"}

@@ -23,7 +23,7 @@ export const Nav = () => {
             <div className="flex-shrink-0 min-w-[40px]">
               <Link to="/" className="flex items-center">
                 <img
-                  src="/gurudevs.png"
+                  src="/gurudevs.svg"
                   alt="Guru logo"
                   className="h-8 w-auto sm:h-10 md:h-11"
                 />

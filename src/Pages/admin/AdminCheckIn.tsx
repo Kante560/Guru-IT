@@ -27,6 +27,9 @@ const AdminCheckIn = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
   const [activeTab, setActiveTab] = useState<"pending" | "attendance">("pending");
+  // Pagination for pending check-ins
+  const [pendingPage, setPendingPage] = useState(1);
+  const [pendingPageSize, setPendingPageSize] = useState(10);
 
   // Attendance state
   const [attendance, setAttendance] = useState<AttendanceItem[]>([]);
@@ -39,24 +42,23 @@ const AdminCheckIn = () => {
     const fetchCheckins = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          "https://guru-it.vercel.app/admin/checkins?status=pending",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
-          }
-        );
+        const offset = (pendingPage - 1) * pendingPageSize;
+        const url = `https://guru-it.vercel.app/admin/checkins?status=pending&limit=${pendingPageSize}&offset=${offset}`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
 
         const data = await response.json();
 
         let checkinsArr: CheckIn[] = [];
         if (Array.isArray(data)) {
-          checkinsArr = data;
+          checkinsArr = data as CheckIn[];
         } else if (data && Array.isArray(data.checkins)) {
-          checkinsArr = data.checkins;
+          checkinsArr = data.checkins as CheckIn[];
         }
 
         const formattedCheckins = checkinsArr.map((checkin: CheckIn) => ({
@@ -80,7 +82,7 @@ const AdminCheckIn = () => {
     };
 
     fetchCheckins();
-  }, [token]);
+  }, [token, pendingPage, pendingPageSize]);
 
   // Fetch daily attendance when the tab is active or date changes
   useEffect(() => {
@@ -210,6 +212,11 @@ const AdminCheckIn = () => {
     );
   });
 
+  // Pagination helpers for pending section (server-driven)
+  const safePendingPage = Math.max(1, pendingPage);
+  const pendingStartIndex = (safePendingPage - 1) * pendingPageSize;
+  const hasNextPending = pendingCheckins.length === pendingPageSize; // heuristic when total is unknown
+
   return (
     <div className="min-h-screen bg-gray-100 pt-20 font-inter">
       <AdminNav />
@@ -252,9 +259,10 @@ const AdminCheckIn = () => {
               </div>
             ) : (
               <div className="w-full overflow-x-auto">
-                <table className="min-w-[600px] w-full bg-white border border-gray-200 shadow rounded-md text-xs sm:text-sm">
+                <table className="min-w-[700px] w-full bg-white border border-gray-200 shadow rounded-md text-xs sm:text-sm">
                   <thead>
                     <tr className="bg-blue-100 text-left font-semibold text-gray-700">
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b w-12">No.</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Name</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Track</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Check-in Time</th>
@@ -263,8 +271,9 @@ const AdminCheckIn = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredCheckins.map((checkin) => (
+                    {filteredCheckins.map((checkin, idx) => (
                       <tr key={checkin.id} className="text-xs sm:text-sm text-gray-700">
+                        <td className="py-2 px-2 sm:px-4 border-b text-gray-600">{pendingStartIndex + idx + 1}</td>
                         <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[120px]">{checkin.name}</td>
                         <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[100px]">{checkin.track}</td>
                         <td className="py-2 px-2 sm:px-4 border-b break-words max-w-[140px]">{checkin.checkInTime}</td>
@@ -295,6 +304,46 @@ const AdminCheckIn = () => {
                 </table>
                 {filteredCheckins.length === 0 && (
                   <div className="text-center py-4 text-gray-500">No pending check-ins found</div>
+                )}
+                {filteredCheckins.length > 0 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+                    <div className="text-gray-600 text-xs sm:text-sm">
+                      Showing <span className="font-semibold">{filteredCheckins.length === 0 ? 0 : pendingStartIndex + 1}</span>-<span className="font-semibold">{pendingStartIndex + filteredCheckins.length}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="px-3 py-1 rounded border text-sm disabled:opacity-50"
+                        onClick={() => setPendingPage((p) => Math.max(1, p - 1))}
+                        disabled={safePendingPage === 1}
+                      >
+                        Prev
+                      </button>
+                      <span className="text-sm">
+                        Page <span className="font-semibold">{safePendingPage}</span>
+                      </span>
+                      <button
+                        className="px-3 py-1 rounded border text-sm disabled:opacity-50"
+                        onClick={() => setPendingPage((p) => p + 1)}
+                        disabled={!hasNextPending}
+                      >
+                        Next
+                      </button>
+                      <select
+                        className="ml-2 border rounded px-2 py-1 text-sm"
+                        value={pendingPageSize}
+                        onChange={(e) => {
+                          const newSize = parseInt(e.target.value, 10);
+                          setPendingPageSize(newSize);
+                          setPendingPage(1);
+                        }}
+                      >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                      </select>
+                    </div>
+                  </div>
                 )}
               </div>
             )}

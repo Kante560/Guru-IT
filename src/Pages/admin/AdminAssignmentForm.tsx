@@ -34,7 +34,7 @@ const AssignmentModalform = ({
 }) => {
   const { token } = useAuth();
   const [formData, setFormData] = useState<AssignmentForm>({
-    track: "Backend-web",
+    track: "",
     topic: "",
     date: new Date().toISOString().split("T")[0],
     time: new Date().toTimeString().split(" ")[0].slice(0, 5),
@@ -182,11 +182,13 @@ const AssignmentModalform = ({
             <input
               type="date"
               name="date"
+              placeholder="Date of deadline"
               value={formData.date}
               onChange={handleChange}
               className="w-full focus:outline-none focus:shadow-sm focus:shadow-blue-500 px-3 py-2 border border-gray-300 rounded"
             />
             {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}
+
 
             <input
               type="time"
@@ -217,9 +219,10 @@ const AssignmentModalform = ({
               text-sm sm:text-base
               truncate"
             >
+              <option value="">Select track</option>
               <option value="Backend-mobile">Backend-mobile</option>
-              <option value="Backend-web">Backend-web</option>
-              <option value="Frontend-web">Frontend-web</option>
+              <option value="Backend">Backend-web</option>
+              <option value="Frontend">Frontend-web</option>
               <option value="Frontend-mobile">Frontend-mobile</option>
               <option value="UIUX">UIUX</option>
             </select>

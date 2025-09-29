@@ -5,7 +5,7 @@ import { AdminNav } from "./AdminNav";
 interface User {
   name: string;
   email: string;
-
+  reg_no: string;
   track: string;
 }
 
@@ -24,8 +24,11 @@ const UsersPage = () => {
   
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoading(true);
       try {
-        const response = await fetch("https://guru-it.vercel.app/admin/users", {
+        const offset = (currentPage - 1) * pageSize;
+        const url = `https://guru-it.vercel.app/admin/users?limit=${pageSize}&offset=${offset}`;
+        const response = await fetch(url, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -33,7 +36,6 @@ const UsersPage = () => {
           },
         });
 
-       
         const data = await response.json();
 
         if (Array.isArray(data)) {
@@ -43,24 +45,26 @@ const UsersPage = () => {
         } else {
           setUsers([]);
         }
-        console.log(data);
+        console.log("Fetched users page:", { currentPage, pageSize, offset, data });
       } catch (error) {
         console.error(error);
+        setUsers([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchUsers();
-  }, [token]);
+  }, [token, currentPage, pageSize]);
 
-  // Filter users by name, email, or track
+  // Filter users by name, email, reg_no, or track (applies within current page)
   const filteredUsers = users.filter((user) => {
     const search = filter.trim().toLowerCase();
     if (!search) return true;
     return (
       (user.name?.toLowerCase() || "").includes(search) ||
       (user.email?.toLowerCase() || "").includes(search) ||
+      (user.reg_no?.toLowerCase() || "").includes(search) ||
       (user.track?.toLowerCase() || "").includes(search)
     );
   });
@@ -70,13 +74,11 @@ const UsersPage = () => {
     setCurrentPage(1);
   }, [filter]);
 
-  // Pagination calculations
-  const totalItems = filteredUsers.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-  const safePage = Math.min(Math.max(1, currentPage), totalPages);
-  const startIndex = (safePage - 1) * pageSize;
-  const endIndex = Math.min(startIndex + pageSize, totalItems);
-  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+  // Server-side pagination calculations
+  const safePage = Math.max(1, currentPage);
+  const startIndex = (safePage - 1) * pageSize; // global index start for numbering
+  const paginatedUsers = filteredUsers; // current page already from server
+  const hasNextPage = users.length === pageSize; // heuristic when total is unknown
 
   return (
     <>
@@ -101,7 +103,7 @@ const UsersPage = () => {
                 <div className="h-6 w-32 sm:w-48 bg-gray-200 rounded mb-2 sm:mb-4 animate-pulse"></div>
               </div>
               <div className="overflow-x-auto">
-                <table className="min-w-[400px] sm:min-w-full text-xs sm:text-sm">
+                <table className="min-w-[500px] sm:min-w-full text-xs sm:text-sm">
                   <thead>
                     <tr className="bg-blue-100 text-left font-semibold text-gray-700">
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">
@@ -115,6 +117,9 @@ const UsersPage = () => {
                       </th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">
                         <div className="h-4 w-20 sm:w-24 bg-gray-200 rounded animate-pulse"></div>
+                      </th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">
+                        <div className="h-4 w-24 sm:w-28 bg-gray-200 rounded animate-pulse"></div>
                       </th>
                     </tr>
                   </thead>
@@ -133,6 +138,9 @@ const UsersPage = () => {
                         <td className="py-2 px-2 sm:px-4 border-b">
                           <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
                         </td>
+                        <td className="py-2 px-2 sm:px-4 border-b">
+                          <div className="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -143,19 +151,18 @@ const UsersPage = () => {
         ) : (
           <div className="min-h-[60vh] bg-gray-100 pt-6 sm:pt-10 pb-6 sm:pb-10 font-inter flex flex-col items-center justify-center">
             <div className="w-full max-w-4xl bg-white rounded-md shadow p-2 sm:p-4 md:p-8">
-              <div className="mb-4 sm:mb-6">
-                <h3 className="text-base sm:text-xl font-semibold mb-2 sm:mb-4 text-gray-800">
-                  User List
-                </h3>
-              </div>
+              <h3 className="text-base sm:text-xl font-semibold mb-2 sm:mb-4 text-gray-800">
+                User List
+              </h3>
               <div className="overflow-x-auto">
-                <table className="min-w-[400px] sm:min-w-full text-xs sm:text-sm">
+                <table className="min-w-[500px] sm:min-w-full text-xs sm:text-sm">
                   <thead>
                     <tr className="bg-blue-100 text-left font-semibold text-gray-700">
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b w-12">No.</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Name</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Email</th>
                       <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Track</th>
+                      <th className="py-2 sm:py-3 px-2 sm:px-4 border-b">Reg No</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -165,6 +172,7 @@ const UsersPage = () => {
                         <td className="py-2 px-2 sm:px-4 border-b break-all">{user.name}</td>
                         <td className="py-2 px-2 sm:px-4 border-b break-all">{user.email}</td>
                         <td className="py-2 px-2 sm:px-4 border-b">{user.track}</td>
+                        <td className="py-2 px-2 sm:px-4 border-b">{user.reg_no || "N/A"}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -177,10 +185,7 @@ const UsersPage = () => {
                 {/* Pagination Controls */}
                 {filteredUsers.length > 0 && (
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
-                    <div className="text-gray-600 text-xs sm:text-sm">
-                      Showing <span className="font-semibold">{totalItems === 0 ? 0 : startIndex + 1}</span>-
-                      <span className="font-semibold">{endIndex}</span> of <span className="font-semibold">{totalItems}</span>
-                    </div>
+                    <div className="text-gray-600 text-xs sm:text-sm">Showing <span className="font-semibold">{paginatedUsers.length === 0 ? 0 : startIndex + 1}</span>-<span className="font-semibold">{startIndex + paginatedUsers.length}</span></div>
                     <div className="flex items-center gap-2">
                       <button
                         className="px-3 py-1 rounded border text-sm disabled:opacity-50"
@@ -190,12 +195,12 @@ const UsersPage = () => {
                         Prev
                       </button>
                       <span className="text-sm">
-                        Page <span className="font-semibold">{safePage}</span> of <span className="font-semibold">{totalPages}</span>
+                        Page <span className="font-semibold">{safePage}</span>
                       </span>
                       <button
                         className="px-3 py-1 rounded border text-sm disabled:opacity-50"
-                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={safePage === totalPages}
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                        disabled={!hasNextPage}
                       >
                         Next
                       </button>
