@@ -70,7 +70,6 @@ export const Login = () => {
       </div>
       {/* Right Column */}
       <div className="hidden lg:flex flex-1 bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 text-white relative">
-        <div className="absolute top-6 right-8 text-2xl font-bold">Guru-IT</div>
         <div className="m-auto max-w-lg text-center">
           <SplitText
             className="text-xl font-medium leading-relaxed"

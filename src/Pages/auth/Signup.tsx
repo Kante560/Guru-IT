@@ -24,6 +24,7 @@ export const Signup = () => {
     role: "user", // ✅ backend can later update this if needed
   },
 });
+
   const   onSubmit = async (data: z.input<typeof SignupSchema>) => {
     try {
       setIsSubmitting(true);
@@ -40,7 +41,6 @@ export const Signup = () => {
     <div className="min-h-screen w-full bg-[#131A29] flex flex-col lg:flex-row font-inter">
       {/* Right Column (Quote) */}
       <div className="hidden lg:flex flex-1 bg-[#131A29] text-white relative">
-        <div className="absolute top-[3rem] left-2 text-2xl font-bold">GURU-IT</div>
         <div className="m-auto max-w-lg text-center px-4 md:px-8">
           <SplitText
             className="text-xl font-medium leading-relaxed"
