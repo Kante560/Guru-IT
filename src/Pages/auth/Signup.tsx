@@ -38,6 +38,7 @@ export const Signup = () => {
   };
 
   return (
+    
     <div className="min-h-screen w-full bg-[#131A29] flex flex-col lg:flex-row font-inter">
       {/* Right Column (Quote) */}
       <div className="hidden lg:flex flex-1 bg-[#131A29] text-white relative">
