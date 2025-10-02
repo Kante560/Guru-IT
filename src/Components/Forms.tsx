@@ -110,7 +110,6 @@ export const Forms: React.FC = () => {
           },
         });
 
-        console.log("Fetch current assignment response:", res);
 
         if (!res.ok) {
           // try to show backend message if present

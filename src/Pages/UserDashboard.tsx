@@ -1,17 +1,14 @@
 import { useAuth } from "../_context/AuthContext.tsx";
 import { Footer } from "../Components/Footer.tsx";
-import { CalendarPage } from "../Components/Calender.tsx";
 import { Nav } from "../Components/Nav.tsx";
 import SplitText from "../ui/SplitText.tsx"; // ✅ import GSAP SplitText
-import CheckinInfo from "../Components/CheckinInfo.tsx";
+import {AuthUserdashboard} from "./AuthUserdashboard.tsx";
 
 export const Home = () => {
   const { isAuthenticated } = useAuth();
-    const { user } = useAuth();
-    const userName = user ? user.name : "User";
 
   const handleAnimationComplete = () => {
-    console.log("All letters have animated!");
+    console.log("Animation complete");
   };
 
   return (
@@ -20,28 +17,18 @@ export const Home = () => {
 
       {isAuthenticated ? (
         <div className="min-h-[150vh] w-full bg-user-dashboard">
-          <div className="flex flex-col md:flex-row md:items-start gap-8 md:gap-10 items-center justify-center w-full py-8 sm:py-12 md:py-20">
-            <div className="flex flex-col mt-20 md:mt-28 w-full max-w-3xl md:max-w-5xl mx-auto bg-white/80 rounded-2xl md:rounded-3xl shadow-2xl p-4 sm:p-8 md:p-10 transition-all duration-300 hover:shadow-3xl">
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-4 sm:mb-8 md:mb-10 text-center text-blue-900 tracking-tight drop-shadow">
-                Welcome to <span className="text-red-600">GURU-IT</span> {(userName ?? "User").split(" ")[0]}! 👋
-              </h1>
-              <div className="flex flex-col md:flex-col gap-6 sm:gap-8 md:gap-10 items-center justify-center w-full">
-                <div className="flex justify-center items-center w-full md:w-[70%]">
-                  <CalendarPage />
-                </div>
-              <CheckinInfo/>
-              </div>
-            </div>
-          </div>
-
-          <Footer />
-
+          <AuthUserdashboard />
         </div>
       ) : (
         <div className="min-h-[80vh] w-full bg-unauth-home pt-28 sm:pt-32 md:pt-40 pb-12">
           <div className="font-inter min-h-[90vh] flex items-center justify-center relative overflow-hidden px-3 sm:px-4 md:px-6">
             {/* Animated shooting stars */}
             <div className="absolute top-[20%] left-[10%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[3s]"></div>
+            <div className="absolute top-[40%] left-[20%] w-[1px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[6s]"></div>
+            <div className="absolute top-[60%] left-[30%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[10s]"></div>
+            <div className="absolute top-[80%] left-[40%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[15s]"></div>
+            <div className="absolute top-[20%] right-[10%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[3s]"></div>
+             <div className="absolute top-[20%] left-[10%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[3s]"></div>
             <div className="absolute top-[40%] left-[20%] w-[1px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[6s]"></div>
             <div className="absolute top-[60%] left-[30%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[10s]"></div>
             <div className="absolute top-[80%] left-[40%] w-[2px] h-[80px] bg-gradient-to-b from-white to-transparent rotate-45 animate-shooting delay-[15s]"></div>

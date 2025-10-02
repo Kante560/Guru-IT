@@ -393,8 +393,6 @@ const AssignmentModalform = ({
         },
         body: form,
       });
-      console.log("Response status:", res.status);
-      console.log("Response body:", await res.text());
 
       if (!res.ok) {
         const errorText = await res.text();

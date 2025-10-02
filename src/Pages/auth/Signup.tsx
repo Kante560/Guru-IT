@@ -31,7 +31,6 @@ export const Signup = () => {
       toast.success("Signup successful! Welcome to GURU-IT.");
     } catch (error) {
       toast.error("Signup failed. Please check your details.");
-      console.log("Signup error:", error);
     } finally {
       setIsSubmitting(false);
     }

@@ -18,9 +18,7 @@ const UsersPage = () => {
   const [pageSize, setPageSize] = useState(10);
 
   // Debug: Log the token to verify if it's present
-  useEffect(() => {
-    console.log("Auth token:", token);
-  }, [token]);
+ 
   
   useEffect(() => {
     const fetchUsers = async () => {
@@ -45,7 +43,6 @@ const UsersPage = () => {
         } else {
           setUsers([]);
         }
-        console.log("Fetched users page:", { currentPage, pageSize, offset, data });
       } catch (error) {
         console.error(error);
         setUsers([]);

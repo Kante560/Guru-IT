@@ -49,7 +49,7 @@ export const AdminNav = () => {
             <div className="hidden md:flex flex-1 justify-center">
               <div className="flex gap-4 sm:gap-6 text-white font-medium">
                 <Link to="/admincheckin" className="hover:underline">
-                 Daily Check-Ins
+                  Check-Ins
                 </Link>
                 <Link to="/adminupload" className="hover:underline">
                   Assignments
@@ -91,7 +91,7 @@ export const AdminNav = () => {
                 onClick={toggleMenu}
                 className="block py-2 hover:underline"
               >
-                Pending Check-Ins
+                Check-Ins
               </Link>
               <Link
                 to="/adminupload"

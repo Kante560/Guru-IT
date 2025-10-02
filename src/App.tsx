@@ -15,6 +15,8 @@ import { AssignmentUpload } from "./Pages/admin/AdminAssignmentForm";
 import { Forms } from "./Components/Forms";
 import UserAssignment from "./Pages/UserAssignment";
 import AdminAssignmentsList from "./Pages/admin/AdminAssignmentsList";
+import AuthGuard from "./Components/AuthGuard";
+import { AuthUserdashboard } from "./Pages/AuthUserdashboard";
 
 export const App = () => {
   return (
@@ -27,18 +29,34 @@ export const App = () => {
         <Route path="/login" element={<Login />} />
 
         {/* ---------- Intern-only Routes ---------- */}
+
+        <Route
+          path="/checkin"
+          element={
+            <ProtectedRoute role="">
+              <AuthGuard>
+                <AuthUserdashboard />
+              </AuthGuard>
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/checkinout"
           element={
           <ProtectedRoute role="">
-          <CheckInOut/>
+            <AuthGuard>
+              <CheckInOut/>
+              </AuthGuard>
           </ProtectedRoute> }       
         />
         <Route
           path="/calendar"
           element={
             <ProtectedRoute role="">
-              <CalendarPage />
+              <AuthGuard>
+                <CalendarPage />
+              </AuthGuard>
             </ProtectedRoute>
           }
         />
@@ -46,7 +64,9 @@ export const App = () => {
           path="/forms"
           element={
             <ProtectedRoute role="">
-              <Forms />
+              <AuthGuard>
+                <Forms />
+              </AuthGuard>
             </ProtectedRoute>
           }
         />
@@ -54,7 +74,9 @@ export const App = () => {
           path="/assignment"
           element={
             <ProtectedRoute role="">
-              <UserAssignment />
+              <AuthGuard>
+                <UserAssignment />
+              </AuthGuard>
             </ProtectedRoute>
           }
         />
@@ -64,7 +86,9 @@ export const App = () => {
           path="/admindashboard"
           element={
             <ProtectedRoute role="admin">
-              <AdminDashboard />
+              <AuthGuard>
+                <AdminDashboard />
+              </AuthGuard>
             </ProtectedRoute>
           }
         />
@@ -72,7 +96,9 @@ export const App = () => {
           path="/admincheckin"
           element={
             <ProtectedRoute role="admin">
-              <AdminCheckIn />
+              <AuthGuard>
+                <AdminCheckIn />
+              </AuthGuard>
             </ProtectedRoute>
           }
         />
@@ -80,7 +106,9 @@ export const App = () => {
           path="/users"
           element={
             <ProtectedRoute role="admin">
-              <UsersPage />
+              <AuthGuard>
+                <UsersPage />
+              </AuthGuard>
             </ProtectedRoute>
           }
         />
@@ -88,7 +116,9 @@ export const App = () => {
           path="/adminupload"
           element={
             <ProtectedRoute role="admin">
-              <AssignmentUpload />
+              <AuthGuard>
+                <AssignmentUpload />
+              </AuthGuard>
             </ProtectedRoute>
           }
         />
@@ -96,7 +126,9 @@ export const App = () => {
           path="/adminassignments"
           element={
             <ProtectedRoute role="admin">
-              <AdminAssignmentsList />
+              <AuthGuard>
+                <AdminAssignmentsList />
+              </AuthGuard>
             </ProtectedRoute>
           }
         />

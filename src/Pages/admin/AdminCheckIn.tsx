@@ -157,7 +157,6 @@ const AdminCheckIn = () => {
     id: number,
     status: "approved" | "rejected"
   ) => {
-    console.log("Updating check-in:", id, "with status:", status);
 
     try {
       const response = await fetch(
